@@ -1,0 +1,1710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B4F3C">
+<title>Modu Modu</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=DM+Sans:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+button{font-family:inherit}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{animation:spin 0.9s linear infinite}
+@media (prefers-reduced-motion: reduce){.spinner{animation:none}}
+@keyframes spA{0%{transform:translateX(-40px);opacity:0}60%{opacity:1}100%{transform:translateX(0);opacity:1}}
+@keyframes spB{0%{transform:translateX(40px);opacity:0}60%{opacity:1}100%{transform:translateX(0);opacity:1}}
+@keyframes spUp{0%{transform:translateY(14px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes spOut{to{opacity:0}}
+.splash{animation:spOut 0.4s ease 2.5s forwards}
+.sp-a{animation:spA 0.8s cubic-bezier(0.2,0.8,0.2,1) both}
+.sp-b{animation:spB 0.8s cubic-bezier(0.2,0.8,0.2,1) both}
+.sp-word{opacity:0;animation:spUp 0.6s ease 0.9s forwards}
+.sp-tag{opacity:0;animation:spUp 0.6s ease 1.5s forwards}
+@media (prefers-reduced-motion: reduce){.sp-a,.sp-b{animation:none}.sp-word,.sp-tag{animation:none;opacity:1}}
+</style>
+
+<style>
+html,body{height:100%;margin:0;background:#E6ECE9}
+#stage{min-height:100%;display:flex;align-items:flex-start;justify-content:center}
+#frame{position:relative;overflow:hidden}
+#root{transform-origin:0 0;width:390px;height:844px}
+@media (min-width:600px){#frame{box-shadow:0 20px 60px rgba(11,79,60,.25);border-radius:28px;margin:16px 0}}
+</style>
+</head>
+<body>
+<div id="stage"><div id="frame"><div id="root"></div></div></div>
+<script type="text/template" id="tpl">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-direction:column;background:#F4F6F5;color:#14201B;font-family:'DM Sans',system-ui,sans-serif;font-size:15px">
+
+<div style="flex:1;min-height:0;display:flex;flex-direction:column">
+
+<!-- HOME -->
+<sc-if value="{{isHome}}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;min-height:0;overflow-y:auto;padding:24px 20px 20px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font-size:14px;color:#55625C">Welcome back</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg aria-hidden="true" width="38" height="24" viewBox="0 0 38 24"><circle cx="12" cy="12" r="11" fill="#0B4F3C"/><circle cx="26" cy="12" r="11" fill="#F2B33D" stroke="#F4F6F5" stroke-width="2"/></svg>
+        <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;color:#0B4F3C">{{brandName}}</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button aria-label="Notifications" onClick="{{toggleDrawer}}" style="position:relative;width:48px;height:48px;border-radius:50%;border:1.5px solid #DCE3DF;background:#FFFFFF;color:#14201B;display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        <sc-if value="{{showReminder}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="position:absolute;top:9px;right:11px;width:10px;height:10px;border-radius:50%;background:#D93025;border:2px solid #FFFFFF"></span></sc-if>
+      </button>
+      <button aria-label="Profile and settings" onClick="{{openProfile}}" style="width:48px;height:48px;border-radius:50%;border:0;background:#E3EFE9;color:#0B4F3C;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer">You</button>
+    </div>
+  </div>
+
+  <div style="background:#0B4F3C;color:#FFFFFF;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:28px;line-height:1.1">Send to Senegal</span>
+      <span style="font-size:14px;color:#CFE3DA">For every Modu Modu. Wave or Orange Money, once or on repeat.</span>
+    </div>
+    <span style="font-size:14px;color:#CFE3DA">1 USD = 580 FCFA · sample rate</span>
+    <div style="display:flex;gap:10px">
+      <button onClick="{{openSendOnce}}" style="flex:1;height:48px;border:0;border-radius:14px;background:#F2B33D;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">Send money</button>
+      <button onClick="{{openSendRecurring}}" style="flex:1;height:48px;border:1.5px solid #8FB5A5;border-radius:14px;background:transparent;color:#FFFFFF;font-weight:600;font-size:15px;cursor:pointer">Set up recurring</button>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700">Send again</h2>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <sc-for list="{{homeRecipients}}" as="r" hint-placeholder-count="2">
+      <button onClick="{{r.pick}}" style="display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:transparent;cursor:pointer;color:#14201B;min-width:72px;padding:4px">
+        <span aria-hidden="true" style="width:56px;height:56px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;font-size:16px;display:flex;align-items:center;justify-content:center">{{r.initials}}</span>
+        <span style="font-size:14px;font-weight:500">{{r.name}}</span>
+      </button>
+      </sc-for>
+      <button onClick="{{addFromHome}}" style="display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:transparent;cursor:pointer;color:#14201B;min-width:72px;padding:4px">
+        <span aria-hidden="true" style="width:56px;height:56px;border-radius:50%;border:1.5px dashed #0B4F3C;color:#0B4F3C;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        <span style="font-size:14px;font-weight:500">New</span>
+      </button>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700">Past transactions</h2>
+      <button onClick="{{goActivity}}" style="border:0;background:transparent;color:#0B4F3C;font-weight:600;font-size:14px;height:44px;padding:0 4px;cursor:pointer">See all</button>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:0 14px;display:flex;flex-direction:column">
+      <sc-for list="{{recentTx}}" as="x" hint-placeholder-count="3">
+      <button onClick="{{goActivity}}" style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-bottom:1px solid #EEF2F0;background:transparent;padding:12px 0;cursor:pointer;color:#14201B">
+        <span aria-hidden="true" style="width:40px;height:40px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{x.initials}}</span>
+        <span style="flex:1;display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">To {{x.name}}</span><span style="font-size:14px;color:#55625C">{{x.date}} · {{x.method}}</span></span>
+        <span style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-weight:600">{{x.amount}}</span><span style="font-size:12px;font-weight:600;border-radius:999px;padding:2px 8px;{{x.statusStyle}}">{{x.status}}</span></span>
+      </button>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- SEND -->
+<sc-if value="{{isSend}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{goHome}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Send money</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 16px;display:flex;flex-direction:column;gap:18px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font-size:14px;font-weight:600;color:#55625C">To</span>
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+      <sc-for list="{{sendRecipients}}" as="r" hint-placeholder-count="2">
+      <button onClick="{{r.pick}}" style="display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid #DCE3DF;background:#FFFFFF;border-radius:16px;padding:10px;cursor:pointer;color:#14201B;min-width:0;{{r.style}}">
+        <span aria-hidden="true" style="width:40px;height:40px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{r.initials}}</span>
+        <span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">{{r.name}}</span><span style="font-size:14px;color:#55625C">{{r.method}}</span></span>
+      </button>
+      </sc-for>
+      <button onClick="{{addFromSend}}" style="display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed #0B4F3C;background:transparent;border-radius:16px;padding:10px;min-height:62px;cursor:pointer;color:#0B4F3C;font-weight:600;font-size:15px">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New recipient
+      </button>
+    </div>
+  </div>
+
+  <div style="display:flex;background:#E7ECE9;border-radius:14px;padding:4px;gap:4px">
+    <button onClick="{{setOneTime}}" style="flex:1;height:44px;border:0;border-radius:11px;font-weight:600;font-size:15px;cursor:pointer;{{oneStyle}}">One-time</button>
+    <button onClick="{{setRecurring}}" style="flex:1;height:44px;border:0;border-radius:11px;font-weight:600;font-size:15px;cursor:pointer;{{recStyle}}">Recurring</button>
+  </div>
+
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <label for="usd-input" style="font-size:14px;font-weight:600;color:#55625C">You send</label>
+          <div style="display:flex;align-items:center;gap:8px;border-bottom:2px solid #DCE3DF;padding-bottom:4px;{{usdLine}}">
+            <span aria-hidden="true" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:32px;color:#55625C">$</span>
+            <input id="usd-input" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="amount-hint" readOnly="{{usdReadOnly}}" value="{{usdValue}}" onInput="{{onUsdInput}}" onChange="{{onUsdInput}}" style="flex:1;min-width:0;border:0;background:transparent;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:32px;color:#14201B;padding:0;height:48px">
+            <span aria-hidden="true" style="font-weight:600;font-size:16px;color:#55625C">USD</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <label for="xof-input" style="font-size:14px;font-weight:600;color:#55625C">They receive</label>
+          <div style="display:flex;align-items:center;gap:8px;border-bottom:2px solid #DCE3DF;padding-bottom:4px;{{xofLine}}">
+            <input id="xof-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0" aria-describedby="amount-hint" readOnly="{{xofReadOnly}}" value="{{xofValue}}" onInput="{{onXofInput}}" onChange="{{onXofInput}}" style="flex:1;min-width:0;border:0;background:transparent;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:32px;color:#14201B;padding:0;height:48px">
+            <span aria-hidden="true" style="font-weight:600;font-size:16px;color:#55625C">FCFA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span id="amount-hint" style="font-size:14px;{{hintStyle}}">{{amountHint}}</span>
+    <div style="border-top:1px solid #E7ECE9;padding-top:12px;display:flex;flex-direction:column;gap:2px">
+      <span style="font-weight:600">{{convLine1}}</span>
+      <span style="font-size:14px;color:#55625C">{{convLine2}}</span>
+    </div>
+    <span style="font-size:14px;color:#0B4F3C;font-weight:500">Type in either box. The other updates automatically.</span>
+  </div>
+
+  <sc-if value="{{recurring}}" hint-placeholder-val="{{ false }}">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:14px;font-weight:600;color:#55625C">How often</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{freqOpts}}" as="f" hint-placeholder-count="3">
+        <button onClick="{{f.pick}}" style="border:1.5px solid #DCE3DF;background:#FFFFFF;color:#14201B;border-radius:999px;padding:0 14px;height:44px;font-size:14px;font-weight:500;cursor:pointer;{{f.style}}">{{f.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label for="start-date" style="font-size:14px;font-weight:600;color:#55625C">First transfer date</label>
+      <input id="start-date" type="date" min="{{minDate}}" aria-describedby="start-hint" value="{{startStr}}" onInput="{{onStart}}" onChange="{{onStart}}" style="height:48px;border:1.5px solid #DCE3DF;border-radius:12px;padding:0 12px;font-family:inherit;font-size:16px;color:#14201B;background:#FFFFFF;width:100%">
+      <span id="start-hint" style="font-size:14px;{{startHintStyle}}">{{startHint}}</span>
+    </div>
+    <span style="font-size:14px;color:#55625C">Ends: never. Pause, skip or stop any time.</span>
+  </div>
+  </sc-if>
+</div>
+<div style="padding:12px 20px 20px;background:#F4F6F5;border-top:1px solid #E1E7E4">
+  <button disabled="{{reviewDisabled}}" onClick="{{goReview}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer;{{reviewStyle}}">Continue</button>
+</div>
+</sc-if>
+
+<!-- ADD RECIPIENT -->
+<sc-if value="{{isAddRecipient}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{cancelAdd}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">New recipient</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 16px;display:flex;flex-direction:column;gap:18px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <label for="rec-name" style="font-size:14px;font-weight:600;color:#55625C">Full name</label>
+    <input id="rec-name" type="text" autocomplete="off" placeholder="Name as it appears on the wallet" value="{{newName}}" onInput="{{onNewName}}" onChange="{{onNewName}}" style="height:52px;border:1.5px solid #DCE3DF;border-radius:14px;padding:0 14px;font-family:inherit;font-size:16px;color:#14201B;background:#FFFFFF;width:100%">
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font-size:14px;font-weight:600;color:#55625C">Receives money on</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <sc-for list="{{methodOpts}}" as="m" hint-placeholder-count="3">
+      <button onClick="{{m.pick}}" style="border:1.5px solid #DCE3DF;background:#FFFFFF;color:#14201B;border-radius:999px;padding:0 16px;height:44px;font-size:14px;font-weight:500;cursor:pointer;{{m.style}}">{{m.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <label for="rec-phone" style="font-size:14px;font-weight:600;color:#55625C">Mobile number</label>
+    <div style="display:flex;align-items:center;gap:0;border:1.5px solid #DCE3DF;border-radius:14px;background:#FFFFFF;overflow:hidden">
+      <span aria-hidden="true" style="padding:0 12px;height:52px;display:flex;align-items:center;background:#EEF2F0;font-weight:600;color:#3F4D46">+221</span>
+      <input id="rec-phone" type="tel" inputmode="numeric" autocomplete="off" placeholder="77 123 45 67" aria-describedby="phone-hint" value="{{newPhone}}" onInput="{{onNewPhone}}" onChange="{{onNewPhone}}" style="flex:1;min-width:0;height:52px;border:0;padding:0 14px;font-family:inherit;font-size:16px;color:#14201B;background:transparent">
+    </div>
+    <span id="phone-hint" style="font-size:14px;color:#55625C">9 digits, starting with 7.</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <label for="rec-phone2" style="font-size:14px;font-weight:600;color:#55625C">Confirm mobile number</label>
+    <div style="display:flex;align-items:center;gap:0;border:1.5px solid #DCE3DF;border-radius:14px;background:#FFFFFF;overflow:hidden">
+      <span aria-hidden="true" style="padding:0 12px;height:52px;display:flex;align-items:center;background:#EEF2F0;font-weight:600;color:#3F4D46">+221</span>
+      <input id="rec-phone2" type="tel" inputmode="numeric" autocomplete="off" placeholder="Type the number again" aria-describedby="phone2-hint" value="{{newPhone2}}" onInput="{{onNewPhone2}}" onChange="{{onNewPhone2}}" onPaste="{{blockPaste}}" style="flex:1;min-width:0;height:52px;border:0;padding:0 14px;font-family:inherit;font-size:16px;color:#14201B;background:transparent">
+    </div>
+    <span id="phone2-hint" style="font-size:14px;{{phone2HintStyle}}">{{phone2Hint}}</span>
+  </div>
+  <div style="background:#FFF6DD;border:1.5px solid #F2B33D;border-radius:16px;padding:14px;display:flex;gap:10px;align-items:flex-start">
+    <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14201B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+    <span style="font-size:14px;line-height:1.45">Double-check the number. Money sent to the wrong number can be hard to get back.</span>
+  </div>
+</div>
+<div style="padding:12px 20px 20px;background:#F4F6F5;border-top:1px solid #E1E7E4">
+  <button disabled="{{addDisabled}}" onClick="{{saveRecipient}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer;{{addStyle}}">Save recipient</button>
+</div>
+</sc-if>
+
+<!-- PROFILE MENU -->
+<sc-if value="{{isProfile}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{goHome}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Profile</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:center;gap:14px;background:#0B4F3C;color:#FFFFFF;border-radius:20px;padding:18px">
+    <span aria-hidden="true" style="width:56px;height:56px;border-radius:50%;background:#F2B33D;color:#14201B;font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none">SU</span>
+    <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:18px">Sample User</span><span style="font-size:14px;color:#CFE3DA">ID verified</span></span>
+  </div>
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:0 16px;display:flex;flex-direction:column">
+    <sc-for list="{{menuItems}}" as="m" hint-placeholder-count="5">
+    <button onClick="{{m.open}}" style="display:flex;align-items:center;gap:12px;width:100%;min-height:68px;text-align:left;border:0;border-bottom:1px solid #EEF2F0;background:transparent;padding:10px 0;cursor:pointer;color:#14201B">
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:16px">{{m.label}}</span><span style="font-size:14px;color:#55625C">{{m.sub}}</span></span>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55625C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    </sc-for>
+  </div>
+  <button onClick="{{replayIntro}}" style="width:100%;height:48px;border:0;border-radius:14px;background:transparent;color:#0B4F3C;font-weight:600;font-size:15px;cursor:pointer">Replay intro animation</button>
+  <button onClick="{{logOut}}" style="width:100%;height:52px;border:1.5px solid #E7C4C0;border-radius:14px;background:#FFFFFF;color:#9A1F17;font-weight:600;font-size:16px;cursor:pointer">Log out</button>
+</div>
+</sc-if>
+
+<!-- PROFILE INFO -->
+<sc-if value="{{isProfileInfo}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{backProfile}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Profile information</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:4px 18px;display:flex;flex-direction:column">
+    <sc-for list="{{infoRows}}" as="row" hint-placeholder-count="5">
+    <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #EEF2F0">
+      <span style="color:#55625C;font-size:14px">{{row.k}}</span>
+      <span style="font-weight:600;text-align:right">{{row.v}}</span>
+    </div>
+    </sc-for>
+  </div>
+  <span style="font-size:14px;color:#55625C;line-height:1.45">These details were checked when you verified your ID. To change them, contact support.</span>
+  <div style="background:#EAF4EF;border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:6px">
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px">Your limits</span>
+    <sc-for list="{{limitRows}}" as="row" hint-placeholder-count="2">
+    <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#3F4D46;font-size:14px">{{row.k}}</span><span style="font-weight:600">{{row.v}}</span></div>
+    </sc-for>
+    <button onClick="{{raiseLimits}}" style="margin-top:6px;height:48px;border:1.5px solid #0B4F3C;border-radius:14px;background:transparent;color:#0B4F3C;font-weight:600;font-size:15px;cursor:pointer">Raise my limits</button>
+  </div>
+  <span style="font-size:13px;color:#55625C">Prototype only. All details shown are sample values.</span>
+</div>
+</sc-if>
+
+<!-- PAYMENT METHODS -->
+<sc-if value="{{isPayMethods}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{backProfile}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Payment methods</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px">
+  <div style="background:#EAF4EF;border-radius:16px;padding:14px;font-size:14px;line-height:1.45;color:#3F4D46">We accept debit cards, bank accounts, Apple Pay and Google Pay. Credit cards are not accepted.</div>
+  <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700">Cards and bank accounts</h2>
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:0 16px;display:flex;flex-direction:column">
+    <sc-for list="{{savedMethods}}" as="mth" hint-placeholder-count="2">
+    <div style="display:flex;align-items:center;gap:12px;min-height:68px;border-bottom:1px solid #EEF2F0;padding:10px 0">
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{mth.label}}</span><span style="font-size:14px;color:#55625C">{{mth.sub}}</span></span>
+      <button onClick="{{mth.remove}}" style="height:44px;border:0;background:transparent;color:#9A1F17;font-weight:600;font-size:14px;padding:0 6px;cursor:pointer">Remove</button>
+    </div>
+    </sc-for>
+  </div>
+  <button onClick="{{addDebitFromMethods}}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;border:1.5px dashed #0B4F3C;border-radius:14px;background:transparent;color:#0B4F3C;font-weight:600;font-size:16px;cursor:pointer"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add a debit card</button>
+  <h2 style="margin:8px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700">Digital wallets</h2>
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:0 16px;display:flex;flex-direction:column">
+    <sc-for list="{{walletRows}}" as="w" hint-placeholder-count="2">
+    <div style="display:flex;align-items:center;gap:12px;min-height:68px;border-bottom:1px solid #EEF2F0;padding:10px 0">
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{w.label}}</span><span style="font-size:14px;color:#55625C">{{w.sub}}</span></span>
+      <button onClick="{{w.toggle}}" style="height:44px;border:1.5px solid #C4CFC9;border-radius:12px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer;{{w.btnStyle}}">{{w.btnText}}</button>
+    </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- RECIPIENTS LIST -->
+<sc-if value="{{isRecipientsList}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{backProfile}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Recipients</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:12px">
+  <sc-for list="{{recList}}" as="r" hint-placeholder-count="2">
+  <div style="display:flex;align-items:center;gap:12px;border:1px solid #DCE3DF;background:#FFFFFF;border-radius:16px;padding:12px 14px">
+    <span aria-hidden="true" style="width:44px;height:44px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{r.initials}}</span>
+    <span style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600">{{r.name}}</span><span style="font-size:14px;color:#55625C">{{r.method}} · {{r.phone}}</span></span>
+  </div>
+  </sc-for>
+  <button onClick="{{addRecipientFromProfile}}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;border:1.5px dashed #0B4F3C;border-radius:14px;background:transparent;color:#0B4F3C;font-weight:600;font-size:16px;cursor:pointer"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New recipient</button>
+</div>
+</sc-if>
+
+<!-- SETTINGS -->
+<sc-if value="{{isSettings}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{backProfile}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Settings</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:0 16px;display:flex;flex-direction:column">
+    <sc-for list="{{switchRows}}" as="sr" hint-placeholder-count="3">
+    <div style="display:flex;align-items:center;gap:12px;min-height:72px;border-bottom:1px solid #EEF2F0;padding:10px 0">
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{sr.label}}</span><span style="font-size:14px;color:#55625C;line-height:1.35">{{sr.sub}}</span></span>
+      <button role="switch" aria-checked="{{sr.on}}" aria-label="{{sr.label}}" onClick="{{sr.toggle}}" style="flex:none;width:56px;height:44px;border:0;background:transparent;display:flex;align-items:center;justify-content:flex-end;padding:0;cursor:pointer">
+        <span style="width:52px;height:32px;border-radius:16px;padding:3px;display:flex;align-items:center;{{sr.trackStyle}}"><span style="width:26px;height:26px;border-radius:50%;background:#FFFFFF"></span></span>
+      </button>
+    </div>
+    </sc-for>
+    <div style="display:flex;flex-direction:column;gap:2px;min-height:72px;justify-content:center;padding:10px 0">
+      <span style="font-weight:600">Recurring transfer reminders</span>
+      <span style="font-size:14px;color:#55625C;line-height:1.35">5 days and 2 days before each transfer. Always on.</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font-size:14px;font-weight:600;color:#55625C">Language</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <sc-for list="{{langOpts}}" as="l" hint-placeholder-count="3">
+      <button onClick="{{l.pick}}" style="border:1.5px solid #DCE3DF;background:#FFFFFF;color:#14201B;border-radius:999px;padding:0 16px;height:44px;font-size:14px;font-weight:500;cursor:pointer;{{l.style}}">{{l.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- HELP -->
+<sc-if value="{{isHelp}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{backProfile}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Help and support</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:0 16px;display:flex;flex-direction:column">
+    <sc-for list="{{helpRows}}" as="h" hint-placeholder-count="4">
+    <button onClick="{{h.open}}" style="display:flex;align-items:center;gap:12px;width:100%;min-height:68px;text-align:left;border:0;border-bottom:1px solid #EEF2F0;background:transparent;padding:10px 0;cursor:pointer;color:#14201B">
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:16px">{{h.label}}</span><span style="font-size:14px;color:#55625C">{{h.sub}}</span></span>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55625C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    </sc-for>
+  </div>
+  <span style="font-size:14px;color:#55625C;line-height:1.45">Have your transaction ID ready when you contact us. You can find it in Activity.</span>
+</div>
+</sc-if>
+
+<!-- ADD CARD -->
+<sc-if value="{{isAddCard}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{cancelAddCard}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Add a debit card</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 16px;display:flex;flex-direction:column;gap:18px">
+  <sc-if value="{{cardFromPay}}" hint-placeholder-val="{{ true }}">
+  <div style="background:#FFF6DD;border:1.5px solid #F2B33D;border-radius:16px;padding:14px;font-size:14px;line-height:1.45">Your previous transaction was cancelled. Add your card, then start a new transfer.</div>
+  </sc-if>
+  <div style="background:#EAF4EF;border-radius:16px;padding:14px;font-size:14px;line-height:1.45;color:#3F4D46">Debit cards only. Credit cards are not accepted.</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <label for="card-name" style="font-size:14px;font-weight:600;color:#55625C">Name on card</label>
+    <input id="card-name" type="text" autocomplete="off" placeholder="Full name" value="{{cardName}}" onInput="{{onCardName}}" onChange="{{onCardName}}" style="height:52px;border:1.5px solid #DCE3DF;border-radius:14px;padding:0 14px;font-family:inherit;font-size:16px;color:#14201B;background:#FFFFFF;width:100%">
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <label for="card-number" style="font-size:14px;font-weight:600;color:#55625C">Card number</label>
+    <input id="card-number" type="text" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" value="{{cardNumDisplay}}" onInput="{{onCardNum}}" onChange="{{onCardNum}}" style="height:52px;border:1.5px solid #DCE3DF;border-radius:14px;padding:0 14px;font-family:inherit;font-size:16px;color:#14201B;background:#FFFFFF;width:100%">
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label for="card-exp" style="font-size:14px;font-weight:600;color:#55625C">Expiry (MM/YY)</label>
+      <input id="card-exp" type="text" inputmode="numeric" autocomplete="off" placeholder="MM/YY" value="{{cardExpDisplay}}" onInput="{{onCardExp}}" onChange="{{onCardExp}}" style="height:52px;border:1.5px solid #DCE3DF;border-radius:14px;padding:0 14px;font-family:inherit;font-size:16px;color:#14201B;background:#FFFFFF;width:100%">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label for="card-cvv" style="font-size:14px;font-weight:600;color:#55625C">Security code</label>
+      <input id="card-cvv" type="text" inputmode="numeric" autocomplete="off" placeholder="CVV" value="{{cardCvv}}" onInput="{{onCardCvv}}" onChange="{{onCardCvv}}" style="height:52px;border:1.5px solid #DCE3DF;border-radius:14px;padding:0 14px;font-family:inherit;font-size:16px;color:#14201B;background:#FFFFFF;width:100%">
+    </div>
+  </div>
+  <span style="font-size:13px;color:#55625C;line-height:1.4">Prototype only. Do not enter a real card number.</span>
+</div>
+<div style="padding:12px 20px 20px;background:#F4F6F5;border-top:1px solid #E1E7E4">
+  <button disabled="{{addCardDisabled}}" onClick="{{saveCard}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer;{{addCardStyle}}">Save card</button>
+</div>
+</sc-if>
+
+<!-- PROGRESS -->
+<sc-if value="{{isProgress}}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;overflow-y:auto;padding:32px 20px 16px;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px">
+    <sc-if value="{{progComplete}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="width:72px;height:72px;border-radius:50%;background:#0B4F3C;display:flex;align-items:center;justify-content:center">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F2B33D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+    </div>
+    </sc-if>
+    <sc-if value="{{progWorking}}" hint-placeholder-val="{{ true }}">
+    <div aria-hidden="true" style="width:72px;height:72px;border-radius:50%;background:#E3EFE9;display:flex;align-items:center;justify-content:center">
+      <div class="spinner" style="width:36px;height:36px;border-radius:50%;border:4px solid #CFE3DA;border-top-color:#0B4F3C"></div>
+    </div>
+    </sc-if>
+    <sc-if value="{{progCancelled}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="width:72px;height:72px;border-radius:50%;background:#EEF2F0;display:flex;align-items:center;justify-content:center">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#3F4D46" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </div>
+    </sc-if>
+    <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:700">{{progTitle}}</h1>
+    <p style="margin:0;color:#3F4D46;line-height:1.5;max-width:310px">{{progBody}}</p>
+  </div>
+
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font-size:14px;color:#55625C">{{idLabel}}</span>
+      <span style="font-weight:700;font-size:20px;letter-spacing:0.06em">{{txId}}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;border-top:1px solid #EEF2F0;padding-top:12px">
+      <span aria-hidden="true" style="width:44px;height:44px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{txInitials}}</span>
+      <span style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600">{{txName}}</span><span style="font-size:14px;color:#55625C">{{txMethod}}</span></span>
+      <span style="display:flex;flex-direction:column;align-items:flex-end"><span style="font-weight:600">{{txUsd}}</span><span style="font-size:14px;color:#55625C">{{txXof}}</span></span>
+    </div>
+  </div>
+
+  <sc-if value="{{progSteps}}" hint-placeholder-val="{{ true }}">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:18px;display:flex;flex-direction:column" role="status" aria-live="polite">
+    <sc-for list="{{stepsList}}" as="st" hint-placeholder-count="4">
+    <div style="display:flex;gap:14px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none;width:28px">
+        <sc-if value="{{st.isDone}}" hint-placeholder-val="{{ true }}">
+        <div aria-hidden="true" style="width:28px;height:28px;border-radius:50%;background:#0B4F3C;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
+        </sc-if>
+        <sc-if value="{{st.isNow}}" hint-placeholder-val="{{ false }}">
+        <div aria-hidden="true" class="spinner" style="width:28px;height:28px;border-radius:50%;border:3px solid #CFE3DA;border-top-color:#0B4F3C"></div>
+        </sc-if>
+        <sc-if value="{{st.isWait}}" hint-placeholder-val="{{ false }}">
+        <div aria-hidden="true" style="width:28px;height:28px;border-radius:50%;border:2px solid #C4CFC9;background:#FFFFFF"></div>
+        </sc-if>
+        <div aria-hidden="true" style="width:2px;flex:1;min-height:20px;margin:4px 0;{{st.lineStyle}}"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding-bottom:16px;flex:1;min-width:0">
+        <span style="font-weight:600;{{st.titleStyle}}">{{st.title}}</span>
+        <span style="font-size:14px;color:#55625C;line-height:1.4">{{st.sub}}</span>
+        <span style="font-size:13px;font-weight:600;{{st.badgeStyle}}">{{st.badge}}</span>
+      </div>
+    </div>
+    </sc-for>
+  </div>
+  </sc-if>
+  <sc-if value="{{showCancelNote}}" hint-placeholder-val="{{ true }}">
+  <span style="font-size:14px;color:#55625C;line-height:1.45;text-align:center">{{progCancelNote}}</span>
+  </sc-if>
+  <sc-if value="{{progCancelled}}" hint-placeholder-val="{{ false }}">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+    <span style="font-weight:600">Refund started</span>
+    <span style="font-size:14px;color:#55625C;line-height:1.45">{{progRefund}}</span>
+  </div>
+  </sc-if>
+</div>
+<div style="padding:12px 20px 20px;display:flex;flex-direction:column;gap:10px;border-top:1px solid #E1E7E4;background:#F4F6F5">
+  <sc-if value="{{progCanCancel}}" hint-placeholder-val="{{ false }}">
+  <button onClick="{{openCancelProgress}}" style="width:100%;height:52px;border:1.5px solid #E7C4C0;border-radius:14px;background:#FFFFFF;color:#9A1F17;font-weight:600;font-size:16px;cursor:pointer">Cancel transfer</button>
+  </sc-if>
+  <sc-if value="{{progViewSchedule}}" hint-placeholder-val="{{ false }}">
+  <button onClick="{{viewNewSchedule}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer">View schedule</button>
+  </sc-if>
+  <button onClick="{{goHome}}" style="width:100%;height:52px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:16px;cursor:pointer">{{progDoneText}}</button>
+</div>
+</sc-if>
+
+<!-- REMINDER -->
+<sc-if value="{{isReminder}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{goHome}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Upcoming transfer</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 16px;display:flex;flex-direction:column;gap:16px">
+  <div style="background:#0B4F3C;color:#FFFFFF;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:6px">
+    <span style="font-size:14px;color:#CFE3DA">Goes out {{remDate}}</span>
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:40px;line-height:1.1">{{remUsd}}</span>
+    <span style="color:#CFE3DA">to {{remName}} · {{remMethod}}</span>
+  </div>
+  <div style="background:#FFF6DD;border:1.5px solid #F2B33D;border-radius:16px;padding:14px;display:flex;gap:10px;align-items:flex-start">
+    <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14201B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <span style="font-size:14px;line-height:1.45"><b>Last day to change this transfer is today.</b> After that it is locked and goes out as planned.</span>
+  </div>
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:6px 18px;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #EEF2F0"><span style="color:#55625C;font-size:14px">They receive about</span><span style="font-weight:600">{{remXof}}</span></div>
+    <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #EEF2F0"><span style="color:#55625C;font-size:14px">Pay with</span><span style="font-weight:600">Debit card ···· 4242</span></div>
+    <div style="padding:12px 0"><span style="color:#55625C;font-size:14px;line-height:1.45">The final rate is set when the transfer is sent, so the amount received can differ slightly.</span></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <button onClick="{{remKeep}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer">Keep as planned</button>
+    <div style="display:flex;gap:10px">
+      <button onClick="{{remSkip}}" style="flex:1;height:48px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">Skip this one</button>
+      <button onClick="{{remPause}}" style="flex:1;height:48px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">Pause plan</button>
+    </div>
+    <button onClick="{{remEdit}}" style="width:100%;height:48px;border:0;border-radius:14px;background:transparent;color:#0B4F3C;font-weight:600;font-size:15px;cursor:pointer">Edit amount or frequency</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- SCHEDULES -->
+<sc-if value="{{isSchedules}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:24px 20px 8px">
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:700">Recurring</h1>
+  <button onClick="{{openSendRecurring}}" style="display:flex;align-items:center;gap:6px;height:44px;border:0;border-radius:999px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:14px;padding:0 16px;cursor:pointer">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    New
+  </button>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:12px">
+  <sc-for list="{{liveList}}" as="s" hint-placeholder-count="2">
+  <button onClick="{{s.open}}" style="display:flex;flex-direction:column;gap:12px;text-align:left;border:1px solid #DCE3DF;background:#FFFFFF;border-radius:20px;padding:16px;cursor:pointer;color:#14201B;width:100%">
+    <span style="display:flex;align-items:center;gap:12px;width:100%">
+      <span aria-hidden="true" style="width:44px;height:44px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{s.initials}}</span>
+      <span style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600">{{s.name}}</span><span style="font-size:14px;color:#55625C">{{s.method}}</span></span>
+      <span style="font-size:13px;font-weight:600;border-radius:999px;padding:4px 10px;{{s.statusStyle}}">{{s.statusText}}</span>
+    </span>
+    <span style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+      <span style="display:flex;flex-direction:column"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px">{{s.usdText}}</span><span style="font-size:14px;color:#55625C">{{s.freqText}}</span></span>
+      <span style="font-size:14px;font-weight:500">{{s.nextText}}</span>
+    </span>
+  </button>
+  </sc-for>
+  <sc-if value="{{noLive}}" hint-placeholder-val="{{ false }}">
+  <div style="border:1px dashed #C4CFC9;border-radius:16px;padding:16px;color:#55625C;font-size:14px">No active recurring transfers.</div>
+  </sc-if>
+  <sc-if value="{{hasEnded}}" hint-placeholder-val="{{ false }}">
+  <h2 style="margin:12px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700">Ended</h2>
+  <sc-for list="{{endedList}}" as="e" hint-placeholder-count="1">
+  <button onClick="{{e.open}}" style="display:flex;align-items:center;gap:12px;text-align:left;border:1px solid #DCE3DF;background:#FAFBFA;border-radius:16px;padding:12px 14px;cursor:pointer;color:#55625C;width:100%">
+    <span aria-hidden="true" style="width:40px;height:40px;border-radius:50%;background:#E9ECEB;color:#4A5551;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{e.initials}}</span>
+    <span style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600;color:#14201B">{{e.name}} · {{e.usdText}}</span><span style="font-size:14px">{{e.freqText}}</span></span>
+  </button>
+  </sc-for>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- DETAIL -->
+<sc-if value="{{isDetail}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:4px;padding:12px 12px 4px 8px">
+  <button aria-label="Back" onClick="{{goSchedules}}" style="width:44px;height:44px;border:0;background:transparent;color:#14201B;display:flex;align-items:center;justify-content:center;border-radius:12px;cursor:pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Recurring transfer</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span aria-hidden="true" style="width:48px;height:48px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{d.initials}}</span>
+      <span style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600;font-size:17px">{{d.name}}</span><span style="font-size:14px;color:#55625C">{{d.method}} · {{d.phone}}</span></span>
+      <span style="font-size:13px;font-weight:600;border-radius:999px;padding:4px 10px;{{d.statusStyle}}">{{d.statusText}}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:36px;line-height:1.1">{{d.usdText}}</span>
+      <span style="color:#3F4D46">{{d.freqText}}</span>
+    </div>
+    <span style="font-size:14px;font-weight:600;color:#0B4F3C">{{d.nextText}}</span>
+  </div>
+
+  <sc-if value="{{notStopped}}" hint-placeholder-val="{{ true }}">
+  <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+    <button disabled="{{skipDisabled}}" onClick="{{doSkip}}" style="display:flex;align-items:center;gap:10px;height:56px;border:1.5px solid #DCE3DF;background:#FFFFFF;border-radius:16px;padding:0 14px;color:#14201B;font-weight:600;font-size:15px;cursor:pointer;{{skipStyle}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4l10 8-10 8z"/><path d="M19 5v14"/></svg>Skip next
+    </button>
+    <button onClick="{{doPauseToggle}}" style="display:flex;align-items:center;gap:10px;height:56px;border:1.5px solid #DCE3DF;background:#FFFFFF;border-radius:16px;padding:0 14px;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">
+      <sc-if value="{{isActive}}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 5v14M16 5v14"/></svg></sc-if>
+      <sc-if value="{{isPaused}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l13 8-13 8z"/></svg></sc-if>
+      {{pauseLabel}}
+    </button>
+    <button onClick="{{openEdit}}" style="display:flex;align-items:center;gap:10px;height:56px;border:1.5px solid #DCE3DF;background:#FFFFFF;border-radius:16px;padding:0 14px;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Edit
+    </button>
+    <button onClick="{{openStop}}" style="display:flex;align-items:center;gap:10px;height:56px;border:1.5px solid #E7C4C0;background:#FFFFFF;border-radius:16px;padding:0 14px;color:#9A1F17;font-weight:600;font-size:15px;cursor:pointer">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>Stop
+    </button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;background:#FFFFFF;border:1px solid #DCE3DF;border-radius:16px;padding:12px 14px">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B4F3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+    <span style="font-size:14px"><b>Reminders</b> 5 days and 2 days before each transfer</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700">Upcoming</h2>
+    <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:4px 16px;display:flex;flex-direction:column">
+      <sc-for list="{{detailOcc}}" as="o" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #EEF2F0">
+        <span style="font-weight:500">{{o.date}}</span>
+        <span style="display:flex;align-items:center;gap:10px"><span style="font-size:14px;color:#55625C">{{o.amount}}</span><span style="font-size:13px;font-weight:600;border-radius:999px;padding:4px 10px;{{o.style}}">{{o.label}}</span></span>
+      </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{isStopped}}" hint-placeholder-val="{{ false }}">
+  <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:16px;padding:14px;font-size:14px;color:#3F4D46;line-height:1.45">This plan has ended. No more transfers will be sent. Your history and receipts stay here.</div>
+  </sc-if>
+
+  <sc-if value="{{hasPast}}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700">Past transfers</h2>
+    <div style="background:#FFFFFF;border:1px solid #DCE3DF;border-radius:20px;padding:4px 16px;display:flex;flex-direction:column">
+      <sc-for list="{{pastList}}" as="p" hint-placeholder-count="2">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #EEF2F0">
+        <span style="display:flex;flex-direction:column"><span style="font-weight:500">{{p.date}}</span><span style="font-size:14px;color:#55625C">Delivered · Receipt</span></span>
+        <span style="font-weight:600">{{p.amount}}</span>
+      </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ACTIVITY -->
+<sc-if value="{{isActivity}}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 20px 8px">
+  <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:700">Activity</h1>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:8px 20px 20px;display:flex;flex-direction:column;gap:10px">
+  <sc-for list="{{activity}}" as="a" hint-placeholder-count="3">
+  <div style="display:flex;flex-direction:column;gap:10px;border:1px solid #DCE3DF;background:#FFFFFF;border-radius:16px;padding:12px 14px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span aria-hidden="true" style="width:44px;height:44px;border-radius:50%;background:#E3EFE9;color:#0B4F3C;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">{{a.initials}}</span>
+      <span style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600">To {{a.name}}</span><span style="font-size:14px;color:#55625C">{{a.date}} · {{a.method}}</span></span>
+      <span style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-weight:600">{{a.amount}}</span><span style="font-size:13px;font-weight:600;border-radius:999px;padding:3px 10px;{{a.statusStyle}}">{{a.status}}</span></span>
+    </div>
+    <span style="font-size:13px;color:#55625C">ID {{a.id}}</span>
+    <sc-if value="{{a.canCancel}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #EEF2F0;padding-top:10px">
+      <span style="font-size:14px;color:#7A5200;font-weight:600">{{a.cancelNote}}</span>
+      <button onClick="{{a.cancel}}" style="height:44px;border:1.5px solid #E7C4C0;background:#FFFFFF;color:#9A1F17;border-radius:12px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer">Cancel transfer</button>
+    </div>
+    </sc-if>
+  </div>
+  </sc-for>
+</div>
+</sc-if>
+
+</div>
+
+<!-- NAV -->
+<sc-if value="{{showNav}}" hint-placeholder-val="{{ true }}">
+<nav style="display:flex;background:#FFFFFF;border-top:1px solid #DCE3DF;padding:6px 8px 14px">
+  <button onClick="{{goHome}}" style="flex:1;height:56px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;font-weight:600;cursor:pointer;{{navHomeStyle}}">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home
+  </button>
+  <button onClick="{{goSchedules}}" style="flex:1;height:56px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;font-weight:600;cursor:pointer;{{navSchedStyle}}">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>Recurring
+  </button>
+  <button onClick="{{goActivity}}" style="flex:1;height:56px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;font-weight:600;cursor:pointer;{{navActStyle}}">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Activity
+  </button>
+</nav>
+</sc-if>
+
+<!-- SHEETS -->
+<sc-if value="{{hasSheet}}" hint-placeholder-val="{{ false }}">
+<button aria-label="Close" onClick="{{closeSheet}}" style="position:absolute;left:0;top:0;right:0;bottom:0;border:0;background:rgba(20,32,27,0.5);cursor:pointer;padding:0"></button>
+</sc-if>
+
+<sc-if value="{{sheetStop}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Stop schedule" style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:24px 24px 0 0;padding:24px 20px 24px;display:flex;flex-direction:column;gap:14px">
+  <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Stop this plan?</h2>
+  <p style="margin:0;color:#3F4D46;line-height:1.5">No more transfers will be sent to {{d.name}}. Your history and receipts stay in the app.</p>
+  <button onClick="{{confirmStop}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#B3261E;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer">Stop plan</button>
+  <button onClick="{{closeSheet}}" style="width:100%;height:52px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:16px;cursor:pointer">Keep plan</button>
+</div>
+</sc-if>
+
+<sc-if value="{{sheetPause}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Pause schedule" style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:24px 24px 0 0;padding:24px 20px 24px;display:flex;flex-direction:column;gap:14px">
+  <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Pause transfers?</h2>
+  <p style="margin:0;color:#3F4D46;line-height:1.5">Upcoming transfers to {{d.name}} are put on hold until you resume. Nothing is charged while paused.</p>
+  <button onClick="{{confirmPause}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer">Pause plan</button>
+  <button onClick="{{closeSheet}}" style="width:100%;height:52px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:16px;cursor:pointer">Cancel</button>
+</div>
+</sc-if>
+
+<sc-if value="{{sheetEdit}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Edit schedule" style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:24px 24px 0 0;padding:24px 20px 24px;display:flex;flex-direction:column;gap:16px">
+  <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Edit plan</h2>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <label for="edit-amount" style="font-size:14px;font-weight:600;color:#55625C">Amount per transfer (USD)</label>
+    <div style="display:flex;align-items:center;gap:8px;border-bottom:2px solid #0B4F3C;padding-bottom:4px">
+      <span aria-hidden="true" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:32px;color:#55625C">$</span>
+      <input id="edit-amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="edit-hint" value="{{editStr}}" onInput="{{onEditAmount}}" onChange="{{onEditAmount}}" style="flex:1;min-width:0;border:0;background:transparent;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:36px;color:#14201B;padding:0;height:52px">
+    </div>
+    <span id="edit-hint" style="font-size:14px;{{editHintStyle}}">{{editHint}}</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <sc-for list="{{editFreqOpts}}" as="f" hint-placeholder-count="3">
+    <button onClick="{{f.pick}}" style="border:1.5px solid #DCE3DF;background:#FFFFFF;color:#14201B;border-radius:999px;padding:0 14px;height:44px;font-size:14px;font-weight:500;cursor:pointer;{{f.style}}">{{f.label}}</button>
+    </sc-for>
+  </div>
+  <span style="font-size:14px;color:#55625C;line-height:1.45">{{editNote}}</span>
+  <button disabled="{{editDisabled}}" onClick="{{saveEdit}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer;{{editBtnStyle}}">Save changes</button>
+  <button onClick="{{closeSheet}}" style="width:100%;height:48px;border:0;border-radius:14px;background:transparent;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">Cancel</button>
+</div>
+</sc-if>
+
+<sc-if value="{{sheetCancel}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Cancel transfer" style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:24px 24px 0 0;padding:24px 20px 24px;display:flex;flex-direction:column;gap:14px">
+  <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Cancel this transfer?</h2>
+  <p style="margin:0;color:#3F4D46;line-height:1.5">{{cancelBody}}</p>
+  <span style="font-size:14px;color:#55625C">ID {{cancelId}}</span>
+  <button onClick="{{confirmCancel}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#B3261E;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer">Cancel transfer</button>
+  <button onClick="{{closeSheet}}" style="width:100%;height:52px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:16px;cursor:pointer">Keep transfer</button>
+</div>
+</sc-if>
+
+<sc-if value="{{sheetPay}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Confirm and pay" style="position:absolute;left:0;right:0;bottom:0;max-height:92%;overflow-y:auto;background:#FFFFFF;border-radius:24px 24px 0 0;padding:16px 20px 24px;display:flex;flex-direction:column;gap:14px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700">Confirm and pay</h2>
+    <button aria-label="Close" onClick="{{closeSheet}}" style="width:44px;height:44px;border:0;background:#EEF2F0;border-radius:50%;color:#14201B;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div style="background:#F4F6F5;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column">
+    <sc-for list="{{payRows}}" as="row" hint-placeholder-count="5">
+    <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #E1E7E4">
+      <span style="color:#55625C;font-size:14px">{{row.k}}</span>
+      <span style="font-weight:600;text-align:right">{{row.v}}</span>
+    </div>
+    </sc-for>
+  </div>
+  <sc-if value="{{recurring}}" hint-placeholder-val="{{ false }}">
+  <div style="background:#EAF4EF;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px">
+    <span style="font-weight:600">{{planText}}</span>
+    <span style="font-size:14px;color:#3F4D46">Next dates: {{planDatesText}}</span>
+    <span style="font-size:14px;color:#3F4D46">We remind you 5 days and 2 days before each transfer. You can skip, pause, edit or stop up to 3 business days before it goes out.</span>
+  </div>
+  </sc-if>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span id="pay-with-label" style="font-size:14px;font-weight:600;color:#55625C">Pay with</span>
+    <button aria-haspopup="listbox" aria-expanded="{{cardOpen}}" aria-labelledby="pay-with-label" onClick="{{toggleCards}}" style="display:flex;align-items:center;gap:14px;min-height:76px;width:100%;text-align:left;border:1.5px solid #0B4F3C;background:#FFFFFF;border-radius:16px;padding:12px 16px;cursor:pointer;color:#14201B">
+      <span aria-hidden="true" style="width:44px;height:44px;border-radius:12px;background:#E3EFE9;color:#0B4F3C;display:flex;align-items:center;justify-content:center;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span>
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:17px">{{selCardLabel}}</span><span style="font-size:14px;color:#55625C">{{selCardSub}}</span></span>
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B4F3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;{{chevStyle}}"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <sc-if value="{{cardOpen}}" hint-placeholder-val="{{ false }}">
+    <div role="listbox" aria-label="Payment methods" style="border:1.5px solid #DCE3DF;border-radius:16px;overflow:hidden;background:#FFFFFF">
+      <sc-for list="{{cardOpts}}" as="c" hint-placeholder-count="3">
+      <button role="option" aria-selected="{{c.pressed}}" onClick="{{c.pick}}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:68px;padding:12px 16px;border:0;border-bottom:1px solid #EEF2F0;background:#FFFFFF;text-align:left;cursor:pointer;color:#14201B;{{c.style}}">
+        <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:16px">{{c.label}}</span><span style="font-size:14px;color:#55625C">{{c.sub}}</span></span>
+        <sc-if value="{{c.pressed}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B4F3C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></sc-if>
+      </button>
+      </sc-for>
+      <button onClick="{{pickAddCard}}" style="display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 16px;border:0;background:#FFFFFF;text-align:left;cursor:pointer;color:#0B4F3C;font-weight:600;font-size:16px">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add new debit card
+      </button>
+    </div>
+    </sc-if>
+  </div>
+  <sc-if value="{{addWarn}}" hint-placeholder-val="{{ false }}">
+  <div role="alert" style="background:#FFF6DD;border:1.5px solid #F2B33D;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <span style="font-weight:700;font-size:16px">This transaction will be cancelled</span>
+    <span style="font-size:14px;line-height:1.45">To add a new card we cancel this transaction first. Add your card, then start a new transfer and it will be ready to use.</span>
+    <button onClick="{{cancelAndAdd}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#14201B;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer">Cancel transaction and add card</button>
+    <button onClick="{{keepCard}}" style="width:100%;height:48px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">Keep this transaction</button>
+  </div>
+  </sc-if>
+  <sc-if value="{{notAddWarn}}" hint-placeholder-val="{{ true }}">
+  <span style="font-size:13px;color:#55625C;line-height:1.4">{{payNote}}</span>
+  <button onClick="{{confirmPay}}" style="width:100%;height:52px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:16px;cursor:pointer">{{payText}}</button>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- NOTIFICATION DRAWER -->
+<sc-if value="{{drawerShow}}" hint-placeholder-val="{{ true }}">
+<button aria-label="Close notification" onClick="{{closeDrawer}}" style="position:absolute;left:0;top:0;right:0;bottom:0;border:0;background:rgba(20,32,27,0.35);cursor:pointer;padding:0"></button>
+<div role="dialog" aria-label="Upcoming transfer notification" style="position:absolute;left:0;right:0;top:0;background:#FFFFFF;border-radius:0 0 24px 24px;padding:24px 20px 12px;display:flex;flex-direction:column;gap:14px;box-shadow:0 12px 32px rgba(20,32,27,0.25)">
+  <div style="display:flex;align-items:flex-start;gap:12px">
+    <span aria-hidden="true" style="width:44px;height:44px;border-radius:12px;background:#F2B33D;display:flex;align-items:center;justify-content:center;flex:none">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14201B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+    </span>
+    <span style="flex:1;display:flex;flex-direction:column;gap:2px">
+      <span style="font-size:13px;font-weight:600;color:#55625C">Upcoming transfer</span>
+      <span style="font-weight:600;font-size:16px;line-height:1.3">{{reminderTitle}}</span>
+      <span style="font-size:14px;color:#55625C">{{reminderSub}}</span>
+    </span>
+    <button aria-label="Close" onClick="{{closeDrawer}}" style="width:44px;height:44px;border:0;background:#EEF2F0;border-radius:50%;color:#14201B;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button onClick="{{drawerView}}" style="flex:1;height:48px;border:0;border-radius:14px;background:#0B4F3C;color:#FFFFFF;font-weight:600;font-size:15px;cursor:pointer">View details</button>
+    <button onClick="{{drawerSkip}}" style="flex:1;height:48px;border:1.5px solid #C4CFC9;border-radius:14px;background:#FFFFFF;color:#14201B;font-weight:600;font-size:15px;cursor:pointer">Skip this one</button>
+  </div>
+  <div aria-hidden="true" style="width:40px;height:4px;border-radius:2px;background:#C4CFC9;align-self:center"></div>
+</div>
+</sc-if>
+
+<!-- TOAST -->
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position:absolute;left:20px;right:20px;bottom:96px;background:#14201B;color:#FFFFFF;border-radius:14px;padding:14px 16px;font-size:14px;font-weight:500;line-height:1.4">{{toast}}</div>
+</sc-if>
+
+<!-- INTRO ANIMATION -->
+<sc-if value="{{splash}}" hint-placeholder-val="{{ false }}">
+<button class="splash" aria-label="Skip intro" onClick="{{skipSplash}}" style="position:absolute;left:0;top:0;right:0;bottom:0;border:0;padding:0;background:#0B4F3C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;cursor:pointer">
+  <svg aria-hidden="true" width="152" height="96" viewBox="0 0 76 48" style="overflow:visible">
+    <circle class="sp-a" cx="24" cy="24" r="22" fill="#FFFFFF"/>
+    <circle class="sp-b" cx="52" cy="24" r="22" fill="#F2B33D" stroke="#0B4F3C" stroke-width="3"/>
+  </svg>
+  <span class="sp-word" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:40px;color:#FFFFFF;line-height:1">{{brandName}}</span>
+  <span class="sp-tag" style="font-size:15px;color:#CFE3DA">For every Modu Modu</span>
+</button>
+</sc-if>
+
+</div>
+</script>
+<script>
+class DCLogic{
+  constructor(props){this.props=props||{};this.state={};this._q=false;this._cb=null}
+  setState(p,cb){const n=typeof p==='function'?p(this.state,this.props):p;if(n)this.state=Object.assign({},this.state,n);if(cb)(this._cbs=this._cbs||[]).push(cb);this._sched()}
+  forceUpdate(){this._sched()}
+  _sched(){if(this._q||!this._render)return;this._q=true;Promise.resolve().then(()=>{this._q=false;this._render();const c=this._cbs;this._cbs=null;c&&c.forEach(f=>f())})}
+}
+function DCBoot(Comp){
+  const SVG='http://www.w3.org/2000/svg';
+  const doc=new DOMParser().parseFromString('<body>'+document.getElementById('tpl').textContent+'</body>','text/html');
+  const tplNodes=Array.from(doc.body.childNodes);
+  const inst=new Comp({});
+  const root=document.getElementById('root');
+  const WHOLE=/^\s*\{\{\s*([^}]*?)\s*\}\}\s*$/;
+  function look(path,scope,vals){
+    if(path==='true')return true;if(path==='false')return false;if(path==='null')return null;
+    if(/^-?\d+(\.\d+)?$/.test(path))return Number(path);
+    if(/^(['"]).*\1$/.test(path))return path.slice(1,-1);
+    const parts=path.split('.');let v=(parts[0] in scope)?scope[parts[0]]:vals[parts[0]];
+    for(let i=1;i<parts.length&&v!=null;i++)v=v[parts[i]];
+    return v;
+  }
+  function interp(s,scope,vals){
+    const m=s.match(WHOLE);if(m)return look(m[1],scope,vals);
+    return s.replace(/\{\{\s*([^}]*?)\s*\}\}/g,(_,p)=>{const v=look(p,scope,vals);return v==null||v===false?'':String(v)});
+  }
+  function build(nodes,scope,vals,out){
+    for(const n of nodes){
+      if(n.nodeType===3){const s=n.nodeValue;out.push(s.indexOf('{{')<0?s:String(((v)=>v==null||v===false?'':v)(interp(s,scope,vals))));continue}
+      if(n.nodeType!==1)continue;
+      const tag=n.localName;
+      if(tag==='sc-if'){const v=interp(n.getAttribute('value')||'',scope,vals);if(v)build(Array.from(n.childNodes),scope,vals,out);continue}
+      if(tag==='sc-for'){
+        const list=interp(n.getAttribute('list')||'',scope,vals)||[];const as=n.getAttribute('as')||'item';
+        list.forEach((it,i)=>{const sc=Object.assign({},scope);sc[as]=it;sc.$index=i;build(Array.from(n.childNodes),sc,vals,out)});continue}
+      const attrs={},ev={};
+      for(const a of Array.from(n.attributes)){
+        const name=a.name;if(name.startsWith('hint-'))continue;
+        const v=a.value.indexOf('{{')<0?a.value:interp(a.value,scope,vals);
+        if(/^on[a-z]/i.test(name)&&typeof v==='function')ev[name.slice(2).toLowerCase()]=v;
+        else attrs[name]=v;
+      }
+      const kids=[];build(Array.from(n.childNodes),scope,vals,kids);
+      out.push({tag:tag,ns:n.namespaceURI,attrs,ev,kids});
+    }
+  }
+  const BOOL=['readonly','disabled','checked','selected','multiple','required','autofocus'];
+  function create(v){
+    if(typeof v==='string')return document.createTextNode(v);
+    const el=v.ns&&v.ns!=='http://www.w3.org/1999/xhtml'?document.createElementNS(v.ns,v.tag):document.createElement(v.tag);
+    el.__a={};el.__h={};el.__l={};patchEl(el,v);return el;
+  }
+  function patchEl(el,v){
+    const old=el.__a;
+    for(const k in old)if(!(k in v.attrs))rm(el,k);
+    for(const k in v.attrs){const nv=v.attrs[k];if(old[k]!==nv)setA(el,k,nv)}
+    el.__a=v.attrs;
+    el.__h=v.ev;
+    for(const e in v.ev)if(!el.__l[e]){el.__l[e]=1;el.addEventListener(e,ev=>{const h=el.__h[e];if(h)h(ev)})}
+    patchKids(el,v.kids);
+    if('value' in v.attrs&&el.tagName==='INPUT'){const s=String(v.attrs.value==null?'':v.attrs.value);if(el.value!==s)el.value=s}
+  }
+  function rm(el,k){const l=k.toLowerCase();if(BOOL.includes(l)){el.removeAttribute(k);if(l==='readonly')el.readOnly=false;return}el.removeAttribute(k)}
+  function setA(el,k,v){
+    const l=k.toLowerCase();
+    if(BOOL.includes(l)){if(v&&v!=='false')el.setAttribute(k,'');else el.removeAttribute(k);return}
+    if(v==null||v===false){el.removeAttribute(k);return}
+    if(l==='value'&&el.tagName==='INPUT'){return}
+    el.setAttribute(k,v===true?'':String(v));
+  }
+  function same(d,v){return typeof v==='string'?d.nodeType===3:(d.nodeType===1&&d.localName===v.tag)}
+  function patchKids(parent,kids){
+    let i=0;
+    for(;i<kids.length;i++){
+      const v=kids[i],d=parent.childNodes[i];
+      if(!d){parent.appendChild(create(v));continue}
+      if(!same(d,v)){parent.replaceChild(create(v),d);continue}
+      if(typeof v==='string'){if(d.nodeValue!==v)d.nodeValue=v}else patchEl(d,v);
+    }
+    while(parent.childNodes.length>kids.length)parent.removeChild(parent.lastChild);
+  }
+  function fit(){
+    const s=Math.min(1,window.innerWidth/390,window.innerHeight/844);
+    const f=document.getElementById('frame');
+    root.style.transform='scale('+s+')';
+    f.style.width=(390*s)+'px';f.style.height=(844*s)+'px';
+  }
+  inst._render=function(){
+    const vals=inst.renderVals();const out=[];
+    build(tplNodes,{},vals,out);patchKids(root,out);
+  };
+  window.addEventListener('resize',fit);fit();
+  inst._render();
+  if(inst.componentDidMount)inst.componentDidMount();
+}
+
+
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      screen: 'home', recipients: this.seedRecipients(), recipient: 'maman', mode: 'usd', amountStr: '',
+      recurring: false, freq: 'monthly', startStr: '', sheet: '', toast: '', selId: 1,
+      editStr: '400', editFreq: 'monthly', reminderDone: false, lastNewId: 0,
+      card: 'c1', cards: this.seedCards(), cardOpen: false, addWarn: false,
+      cardName: '', cardNum: '', cardExp: '', cardCvv: '', progress: 0, txn: null,
+      activity: this.seedActivity(), cancelTarget: '', cardFrom: 'pay',
+      sw: { push: true, whatsapp: false, bio: true }, lang: 'English', drawerOpen: true,
+      splash: !(this.props && this.props.showSplash === false),
+      addFrom: 'send', newName: '', newPhone: '', newPhone2: '', newMethod: 'Wave',
+      schedules: this.seedSchedules()
+    };
+  }
+
+  componentDidMount() {
+    if (this.state.splash) this._s = setTimeout(() => this.setState({ splash: false }), 3000);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._p); clearTimeout(this._s); }
+
+  seedCards() {
+    return [
+      { id: 'c1', kind: 'card', enabled: true, label: 'Debit card ···· 4242', sub: 'Visa debit' },
+      { id: 'c3', kind: 'bank', enabled: true, label: 'Bank account ···· 6021', sub: 'ACH bank transfer' },
+      { id: 'w1', kind: 'wallet', enabled: true, label: 'Apple Pay', sub: 'Confirm with Face ID or passcode' },
+      { id: 'w2', kind: 'wallet', enabled: true, label: 'Google Pay', sub: 'Pay with your Google account' }
+    ];
+  }
+
+  seedActivity() {
+    return [
+      { id: 'TX-8H2K4LQ9', name: 'Maman', initials: 'Ma', method: 'Wave', date: 'Today', amount: '$250.00', status: 'Under review', minsLeft: 22, payLabel: 'Debit card ···· 4242' },
+      { id: 'TX-5M7P1ZD3', name: 'Maman', initials: 'Ma', method: 'Wave', date: this.fmtDate(new Date(2026, 9, 1)), amount: '$400.00', status: 'Delivered', minsLeft: 0, payLabel: 'Debit card ···· 4242' },
+      { id: 'TX-2Q9W6XB8', name: 'Moussa', initials: 'Mo', method: 'Orange Money', date: this.fmtDate(new Date(2026, 8, 21)), amount: '$120.00', status: 'Delivered', minsLeft: 0, payLabel: 'Debit card ···· 4242' },
+      { id: 'TX-7C4N3VK1', name: 'Maman', initials: 'Ma', method: 'Wave', date: this.fmtDate(new Date(2026, 8, 1)), amount: '$400.00', status: 'Delivered', minsLeft: 0, payLabel: 'Debit card ···· 4242' }
+    ];
+  }
+
+  startProgress() {
+    clearTimeout(this._p);
+    const tick = () => {
+      this._p = setTimeout(() => {
+        const p = this.state.progress + 1;
+        this.setState({ progress: p });
+        if (p < 4) tick();
+      }, 1500);
+    };
+    tick();
+  }
+
+  rate() { return 580; }
+  fee() { return 2.99; }
+  seedRecipients() {
+    return [
+      { id: 'maman', name: 'Maman', initials: 'Ma', method: 'Wave', phone: '+221 77 ··· ··12' },
+      { id: 'moussa', name: 'Moussa', initials: 'Mo', method: 'Orange Money', phone: '+221 78 ··· ··45' }
+    ];
+  }
+  shortDays() { return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; }
+  longDays() { return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']; }
+  months() { return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; }
+  fmtDate(d) { return this.shortDays()[d.getDay()] + ' ' + this.months()[d.getMonth()] + ' ' + d.getDate(); }
+  ordinal(n) { const s = ['th', 'st', 'nd', 'rd']; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  fmtUsd(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  fmtNum(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  fmtXof(n) { return this.fmtNum(n) + ' FCFA'; }
+  cleanNum(v, allowDot) {
+    let t = String(v || '').replace(allowDot ? /[^0-9.]/g : /[^0-9]/g, '');
+    if (allowDot) {
+      const i = t.indexOf('.');
+      if (i >= 0) t = t.slice(0, i + 1) + t.slice(i + 1).replace(/\./g, '').slice(0, 2);
+    }
+    return t;
+  }
+  parseDate(str) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str || '');
+    if (!m) return null;
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  }
+  occAt(anchor, freq, i) {
+    if (freq === 'monthly') {
+      const y = anchor.getFullYear();
+      const mo = anchor.getMonth() + i;
+      const dim = new Date(y, mo + 1, 0).getDate();
+      return new Date(y, mo, Math.min(anchor.getDate(), dim));
+    }
+    const step = freq === 'biweekly' ? 14 : 7;
+    return new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() + step * i);
+  }
+  genOcc(start, freq, n) {
+    const out = [];
+    for (let i = 0; i < n; i++) out.push({ d: this.occAt(start, freq, i), state: 'scheduled' });
+    return out;
+  }
+  freqText(s) {
+    const a = s.anchor;
+    if (s.freq === 'monthly') return 'Monthly on the ' + this.ordinal(a.getDate());
+    if (s.freq === 'biweekly') return 'Every 2 weeks on ' + this.longDays()[a.getDay()];
+    return 'Every ' + this.longDays()[a.getDay()];
+  }
+  seedSchedules() {
+    const a1 = new Date(2026, 10, 1);
+    const a2 = new Date(2026, 9, 21);
+    const r = this.seedRecipients();
+    return [
+      { id: 1, name: r[0].name, initials: r[0].initials, method: r[0].method, phone: r[0].phone, usd: 400, freq: 'monthly', anchor: a1, status: 'active', occ: this.genOcc(a1, 'monthly', 4),
+        past: [{ date: this.fmtDate(new Date(2026, 9, 1)), amount: '$400.00' }, { date: this.fmtDate(new Date(2026, 8, 1)), amount: '$400.00' }] },
+      { id: 2, name: r[1].name, initials: r[1].initials, method: r[1].method, phone: r[1].phone, usd: 120, freq: 'monthly', anchor: a2, status: 'active', occ: this.genOcc(a2, 'monthly', 4),
+        past: [{ date: this.fmtDate(new Date(2026, 8, 21)), amount: '$120.00' }] }
+    ];
+  }
+  nextIdx(sc) { return sc.occ.findIndex(function (o) { return o.state === 'scheduled'; }); }
+  upd(id, fn) {
+    this.setState({ schedules: this.state.schedules.map(function (x) { return x.id === id ? fn(Object.assign({}, x)) : x; }) });
+  }
+  showToast(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: '' }), 3000);
+  }
+  skipNext(id) {
+    const sc = this.state.schedules.find(function (x) { return x.id === id; });
+    const i = this.nextIdx(sc);
+    if (i < 0) return;
+    const label = this.fmtDate(sc.occ[i].d);
+    this.upd(id, (x) => {
+      x.occ = x.occ.map(function (o, j) { return j === i ? { d: o.d, state: 'skipped' } : o; });
+      let cnt = x.occ.filter(function (o) { return o.state === 'scheduled'; }).length;
+      while (cnt < 3) {
+        x.occ = x.occ.concat([{ d: this.occAt(x.anchor, x.freq, x.occ.length), state: 'scheduled' }]);
+        cnt++;
+      }
+      return x;
+    });
+    this.showToast('Skipped ' + label + '. The rest of your plan stays active.');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const rate = this.rate();
+    const fee = this.fee();
+    const rec = s.recipients.find(function (r) { return r.id === s.recipient; }) || s.recipients[0];
+    const isUsd = s.mode === 'usd';
+    const lim = isUsd ? { min: 10, max: 2500 } : { min: 5000, max: 1450000 };
+    const limText = isUsd ? '$10 and $2,500' : '5 000 and 1 450 000 FCFA';
+    const amountN = parseFloat(s.amountStr) || 0;
+    const amountOk = amountN >= lim.min && amountN <= lim.max;
+    const usdN = isUsd ? amountN : Math.ceil(amountN / rate * 100) / 100;
+    const xofN = isUsd ? Math.floor(amountN * rate) : amountN;
+    const total = usdN + fee;
+    const sel = 'background:#0B4F3C;color:#FFFFFF;border-color:#0B4F3C;';
+    const minDate = new Date(2026, 9, 17);
+    const pickedStart = this.parseDate(s.startStr);
+    const startValid = !!(pickedStart && pickedStart >= minDate);
+    const startDate = pickedStart || new Date(2026, 10, 1);
+    const nextOf = (sc) => { const i = this.nextIdx(sc); return i < 0 ? null : sc.occ[i]; };
+    const freqDefs = [{ id: 'weekly', label: 'Weekly' }, { id: 'biweekly', label: 'Every 2 weeks' }, { id: 'monthly', label: 'Monthly' }];
+
+    const openSend = (recurring, who) => () => this.setState({
+      screen: 'send', recurring: recurring, recipient: who || this.state.recipient,
+      mode: 'usd', amountStr: '', freq: 'monthly', startStr: '', sheet: ''
+    });
+    const openAdd = (from) => () => this.setState({ screen: 'addRecipient', addFrom: from, newName: '', newPhone: '', newPhone2: '', newMethod: 'Wave' });
+
+    // ---- schedule row helper
+    const statusStyles = {
+      active: 'background:#DDF3E8;color:#0B5B3E;',
+      paused: 'background:#FCEFC9;color:#7A5200;',
+      stopped: 'background:#E9ECEB;color:#4A5551;'
+    };
+    const row = (sc) => {
+      const n = nextOf(sc);
+      const st = sc.status;
+      return {
+        name: sc.name, initials: sc.initials, method: sc.method, phone: sc.phone,
+        usdText: this.fmtUsd(sc.usd), freqText: this.freqText(sc),
+        nextText: st === 'stopped' ? 'Ended' : st === 'paused' ? 'Paused' : (n ? 'Next ' + this.fmtDate(n.d) : 'No upcoming'),
+        statusText: st === 'active' ? 'Active' : st === 'paused' ? 'Paused' : 'Stopped',
+        statusStyle: statusStyles[st],
+        open: () => this.setState({ selId: sc.id, screen: 'detail', sheet: '' })
+      };
+    };
+
+    const live = s.schedules.filter(function (x) { return x.status !== 'stopped'; });
+    const ended = s.schedules.filter(function (x) { return x.status === 'stopped'; });
+    const upcomingSrc = s.schedules.filter(function (x) { return x.status === 'active' && nextOf(x); })
+      .sort(function (a, b) { return nextOf(a).d - nextOf(b).d; }).slice(0, 2);
+
+    // ---- reminder (schedule 2)
+    const sch2 = s.schedules.find(function (x) { return x.id === 2; });
+    const n2 = sch2 ? nextOf(sch2) : null;
+    const showReminder = !!(sch2 && n2 && sch2.status === 'active' && !s.reminderDone);
+    const remDate = n2 ? this.fmtDate(n2.d) : '';
+    const remUsdNum = sch2 ? sch2.usd : 0;
+
+    // ---- detail
+    const sc = s.schedules.find(function (x) { return x.id === s.selId; }) || s.schedules[0];
+    const d = row(sc);
+    const scNext = nextOf(sc);
+    const occStyles = {
+      Scheduled: 'background:#DDF3E8;color:#0B5B3E;',
+      'On hold': 'background:#FCEFC9;color:#7A5200;',
+      Skipped: 'background:#E9ECEB;color:#4A5551;'
+    };
+    const detailOcc = sc.occ.filter(function (o) { return o.state !== 'cancelled'; }).slice(0, 5).map((o) => {
+      const label = o.state === 'skipped' ? 'Skipped' : (sc.status === 'paused' ? 'On hold' : 'Scheduled');
+      return { date: this.fmtDate(o.d), amount: this.fmtUsd(sc.usd), label: label, style: occStyles[label] };
+    });
+    const isActive = sc.status === 'active';
+    const isPaused = sc.status === 'paused';
+    const isStopped = sc.status === 'stopped';
+    const skipDisabled = !(isActive && scNext);
+
+    // ---- edit sheet
+    const editN = parseFloat(s.editStr) || 0;
+    const editOk = editN >= 10 && editN <= 2500;
+    const editFreqOpts = freqDefs.map((f) => ({
+      label: f.label, style: s.editFreq === f.id ? sel : '',
+      pick: () => this.setState({ editFreq: f.id })
+    }));
+
+    const activityRaw = [
+      { name: 'Maman', initials: 'Ma', method: 'Wave', date: this.fmtDate(new Date(2026, 9, 1)), amount: '$400.00' },
+      { name: 'Moussa', initials: 'Mo', method: 'Orange Money', date: this.fmtDate(new Date(2026, 8, 21)), amount: '$120.00' },
+      { name: 'Maman', initials: 'Ma', method: 'Wave', date: this.fmtDate(new Date(2026, 8, 1)), amount: '$400.00' }
+    ];
+
+    // ---- send validation
+    const planAnchor = { freq: s.freq, anchor: startDate };
+    const reviewDisabled = !amountOk || (s.recurring && !startValid);
+    const amountErr = s.amountStr !== '' && !amountOk;
+    let startHint = 'The first transfer is sent on this day.';
+    let startErr = false;
+    if (s.startStr !== '' && !startValid) { startHint = 'Pick a date from tomorrow onward.'; startErr = true; }
+    else if (startValid) { startHint = 'First transfer: ' + this.fmtDate(startDate) + '. Reminders start 5 days before.'; }
+
+    // ---- add recipient validation
+    const nameOk = s.newName.trim().length >= 2;
+    const phoneOk = /^7\d{8}$/.test(s.newPhone);
+    const phoneMatch = s.newPhone2 === s.newPhone;
+    const phone2Err = s.newPhone2 !== '' && !phoneMatch && (s.newPhone2.length >= s.newPhone.length || s.newPhone.indexOf(s.newPhone2) !== 0);
+    const phone2Hint = phone2Err ? "The numbers don't match. Check both." : (phoneOk && phoneMatch ? 'Numbers match.' : 'Type the number again to confirm. Pasting is turned off.');
+    const addDisabled = !(nameOk && phoneOk && phoneMatch);
+
+    const reviewRows = [
+      { k: 'To', v: rec.name + ' · ' + rec.method },
+      { k: 'Number', v: rec.phone },
+      { k: 'You send', v: this.fmtUsd(usdN) },
+      { k: 'Fee', v: this.fmtUsd(fee) },
+      { k: 'Total charged', v: this.fmtUsd(total) },
+      { k: 'They receive', v: this.fmtXof(xofN) },
+      { k: 'Rate', v: '1 USD = ' + rate + ' FCFA' },
+      { k: 'Pay with', v: 'Debit card ···· 4242' }
+    ];
+
+    const tab = (s.screen === 'home' || s.screen === 'schedules' || s.screen === 'activity');
+    const navOn = 'color:#0B4F3C;';
+    const navOff = 'color:#55625C;';
+    const dim = 'opacity:0.4;cursor:not-allowed;';
+    const cards = s.cards.filter(function (c) { return c.kind !== 'wallet' || c.enabled; });
+    const cNumOk = s.cardNum.length >= 15;
+    const cExpOk = s.cardExp.length === 4 && Number(s.cardExp.slice(0, 2)) >= 1 && Number(s.cardExp.slice(0, 2)) <= 12;
+    const cCvvOk = s.cardCvv.length >= 3;
+    const cNameOk = s.cardName.trim().length >= 2;
+    const addCardDisabled = !(cNumOk && cExpOk && cCvvOk && cNameOk);
+    const card = cards.find(function (c) { return c.id === s.card; }) || cards[0];
+    const t = s.txn || {};
+    const actStyles = {
+      Delivered: 'background:#DDF3E8;color:#0B5B3E;',
+      'Under review': 'background:#FCEFC9;color:#7A5200;',
+      'In progress': 'background:#FCEFC9;color:#7A5200;',
+      Cancelled: 'background:#E9ECEB;color:#4A5551;'
+    };
+    const actList = s.activity.map((a) => {
+      const delivered = !!(s.txn && a.id === s.txn.id && s.progress >= 4 && a.status === 'In progress');
+      const status = delivered ? 'Delivered' : a.status;
+      return {
+        id: a.id, name: a.name, initials: a.initials, method: a.method, date: a.date, amount: a.amount,
+        status: status, statusStyle: actStyles[status],
+        canCancel: status === 'Under review' || status === 'In progress',
+        cancelNote: a.minsLeft + ' min left to cancel',
+        cancel: () => this.setState({ sheet: 'cancel', cancelTarget: a.id })
+      };
+    });
+    const cancelItem = s.activity.find(function (a) { return a.id === s.cancelTarget; }) || null;
+    const p = s.progress;
+    const stepDefs = t.recurring
+      ? [
+        { title: 'Payment method saved', sub: (t.cardLabel || '') + ' is charged on each transfer date' },
+        { title: 'Plan created', sub: (t.freqText || '') + ' · ' + this.fmtUsd(t.usd || 0) },
+        { title: 'Reminders scheduled', sub: '5 days and 2 days before each transfer' },
+        { title: 'First transfer scheduled', sub: t.startLabel || '' }
+      ]
+      : [
+        { title: 'Payment received', sub: 'Charged ' + this.fmtUsd(t.total || 0) + ' to ' + (t.cardLabel || '') },
+        { title: 'Safety checks', sub: 'Verifying the sender and recipient details' },
+        { title: 'Sent to ' + (t.method || ''), sub: 'Paying out to ' + (t.name || '') + "'s wallet" },
+        { title: 'Delivered', sub: (t.name || '') + ' received ' + this.fmtXof(t.xof || 0) }
+      ];
+    const stepsList = stepDefs.map(function (st, i) {
+      const done = i < p;
+      const now = i === p && p < 4;
+      return {
+        title: st.title, sub: st.sub,
+        isDone: done, isNow: now, isWait: !done && !now,
+        lineStyle: i === 3 ? 'background:transparent;' : (done ? 'background:#0B4F3C;' : 'background:#DCE3DF;'),
+        titleStyle: done || now ? '' : 'color:#55625C;',
+        badge: done ? 'Done' : (now ? 'In progress' : ''),
+        badgeStyle: done ? 'color:#0B5B3E;' : 'color:#7A5200;'
+      };
+    });
+
+    return {
+      isHome: s.screen === 'home',
+      isSend: s.screen === 'send',
+      isAddRecipient: s.screen === 'addRecipient',
+      isProgress: s.screen === 'progress',
+      brandName: this.props.brandName ?? 'Modu Modu',
+      splash: s.splash,
+      skipSplash: () => { clearTimeout(this._s); this.setState({ splash: false }); },
+      replayIntro: () => {
+        clearTimeout(this._s);
+        this.setState({ splash: false });
+        setTimeout(() => {
+          this.setState({ splash: true, screen: 'home' });
+          this._s = setTimeout(() => this.setState({ splash: false }), 3000);
+        }, 50);
+      },
+      isAddCard: s.screen === 'addCard',
+      isProfile: s.screen === 'profile',
+      isProfileInfo: s.screen === 'profileInfo',
+      isPayMethods: s.screen === 'payMethods',
+      isRecipientsList: s.screen === 'recipientsList',
+      isSettings: s.screen === 'settings',
+      isHelp: s.screen === 'help',
+      isReminder: s.screen === 'reminder',
+      isSchedules: s.screen === 'schedules',
+      isDetail: s.screen === 'detail',
+      isActivity: s.screen === 'activity',
+      showNav: tab,
+      navHomeStyle: s.screen === 'home' ? navOn : navOff,
+      navSchedStyle: s.screen === 'schedules' ? navOn : navOff,
+      navActStyle: s.screen === 'activity' ? navOn : navOff,
+
+      goHome: () => this.setState({ screen: 'home', sheet: '' }),
+      goSchedules: () => this.setState({ screen: 'schedules', sheet: '' }),
+      goActivity: () => this.setState({ screen: 'activity', sheet: '' }),
+      openSendOnce: openSend(false),
+      openSendRecurring: openSend(true),
+
+      // home
+      showReminder: showReminder,
+      reminderTitle: this.fmtUsd(remUsdNum) + ' to Moussa goes out ' + remDate,
+      reminderSub: 'Last day to skip or change: today',
+      openReminder: () => this.setState({ screen: 'reminder', drawerOpen: false }),
+      drawerShow: s.screen === 'home' && s.drawerOpen && showReminder,
+      toggleDrawer: () => this.setState({ drawerOpen: !this.state.drawerOpen }),
+      closeDrawer: () => this.setState({ drawerOpen: false }),
+      drawerView: () => this.setState({ screen: 'reminder', drawerOpen: false }),
+      drawerSkip: () => { this.skipNext(2); this.setState({ reminderDone: true, drawerOpen: false }); },
+      recentTx: actList.slice(0, 3),
+      upcoming: upcomingSrc.map(row),
+      noUpcoming: upcomingSrc.length === 0,
+      homeRecipients: s.recipients.map((r) => ({ name: r.name, initials: r.initials, pick: openSend(false, r.id) })),
+      addFromHome: openAdd('home'),
+
+      // send
+      sendRecipients: s.recipients.map((r) => ({
+        name: r.name, initials: r.initials, method: r.method,
+        style: s.recipient === r.id ? 'border-color:#0B4F3C;background:#EAF4EF;' : '',
+        pick: () => this.setState({ recipient: r.id })
+      })),
+      addFromSend: openAdd('send'),
+      recurring: s.recurring,
+      oneStyle: s.recurring ? 'background:transparent;color:#14201B;' : 'background:#0B4F3C;color:#FFFFFF;',
+      recStyle: s.recurring ? 'background:#0B4F3C;color:#FFFFFF;' : 'background:transparent;color:#14201B;',
+      setOneTime: () => this.setState({ recurring: false }),
+      setRecurring: () => this.setState({ recurring: true }),
+      modeLabel: isUsd ? 'You send (USD)' : 'They receive (FCFA)',
+      amountStr: s.amountStr,
+      amountPrefix: isUsd ? '$' : '',
+      amountSuffix: isUsd ? '' : 'FCFA',
+      usdValue: isUsd ? s.amountStr : (amountN > 0 ? usdN.toFixed(2) : ''),
+      xofValue: isUsd ? (amountN > 0 ? this.fmtNum(xofN) : '') : s.amountStr,
+      usdReadOnly: false,
+      xofReadOnly: false,
+      usdLine: isUsd ? 'border-bottom-color:#0B4F3C;' : '',
+      xofLine: isUsd ? '' : 'border-bottom-color:#0B4F3C;',
+      onUsdInput: (e) => this.setState({ mode: 'usd', amountStr: this.cleanNum(e.target.value, true) }),
+      onXofInput: (e) => this.setState({ mode: 'xof', amountStr: this.cleanNum(e.target.value, false) }),
+      switchLabel: isUsd ? 'Switch to entering the amount in FCFA' : 'Switch to entering the amount in USD',
+      amountHint: amountErr ? 'Enter an amount between ' + limText + '.' : 'Between ' + limText + ' per transfer.',
+      hintStyle: amountErr ? 'color:#B3261E;' : 'color:#55625C;',
+      convLine1: amountN > 0 ? 'You pay ' + this.fmtUsd(total) + ' in total' : 'Enter an amount to see the total',
+      convLine2: amountN > 0
+        ? 'Includes a ' + this.fmtUsd(fee) + ' fee · 1 USD = ' + rate + ' FCFA (sample)'
+        : 'Fee ' + this.fmtUsd(fee) + ' · 1 USD = ' + rate + ' FCFA (sample)',
+      switchText: isUsd ? 'You are typing in USD. Tap the arrows to type in FCFA instead.' : 'You are typing in FCFA. Tap the arrows to type in USD instead.',
+      switchMode: () => {
+        const n = parseFloat(this.state.amountStr) || 0;
+        if (isUsd) this.setState({ mode: 'xof', amountStr: n > 0 ? String(Math.round(n * rate / 500) * 500) : '' });
+        else this.setState({ mode: 'usd', amountStr: n > 0 ? String(Math.round(n / rate * 100) / 100) : '' });
+      },
+      freqOpts: freqDefs.map((f) => ({
+        label: f.label, style: s.freq === f.id ? sel : '',
+        pick: () => this.setState({ freq: f.id })
+      })),
+      minDate: '2026-10-17',
+      startStr: s.startStr,
+      onStart: (e) => this.setState({ startStr: e.target.value }),
+      startHint: startHint,
+      startHintStyle: startErr ? 'color:#B3261E;' : 'color:#55625C;',
+      reviewDisabled: reviewDisabled,
+      reviewStyle: reviewDisabled ? dim : '',
+      goReview: () => { if (!reviewDisabled) this.setState({ sheet: 'pay', cardOpen: false, addWarn: false }); },
+
+      // add recipient
+      newName: s.newName,
+      newPhone: s.newPhone,
+      onNewName: (e) => this.setState({ newName: e.target.value }),
+      onNewPhone: (e) => this.setState({ newPhone: this.cleanNum(e.target.value, false).slice(0, 9) }),
+      newPhone2: s.newPhone2,
+      onNewPhone2: (e) => this.setState({ newPhone2: this.cleanNum(e.target.value, false).slice(0, 9) }),
+      blockPaste: (e) => { e.preventDefault(); },
+      phone2Hint: phone2Hint,
+      phone2HintStyle: phone2Err ? 'color:#B3261E;' : 'color:#55625C;',
+      methodOpts: ['Wave', 'Orange Money', 'Free Money'].map((m) => ({
+        label: m, style: s.newMethod === m ? sel : '',
+        pick: () => this.setState({ newMethod: m })
+      })),
+      addDisabled: addDisabled,
+      addStyle: addDisabled ? dim : '',
+      cancelAdd: () => this.setState({ screen: s.addFrom === 'home' ? 'home' : (s.addFrom === 'profile' ? 'recipientsList' : 'send') }),
+      saveRecipient: () => {
+        if (addDisabled) return;
+        const parts = s.newName.trim().split(/\s+/).slice(0, 2);
+        const initials = parts.map(function (w) { return w.charAt(0).toUpperCase(); }).join('');
+        const p = s.newPhone;
+        const created = {
+          id: 'r' + Date.now(), name: s.newName.trim(), initials: initials, method: s.newMethod,
+          phone: '+221 ' + p.slice(0, 2) + ' ··· ··' + p.slice(7)
+        };
+        this.setState({
+          recipients: this.state.recipients.concat([created]), recipient: created.id, screen: s.addFrom === 'profile' ? 'recipientsList' : 'send',
+          newName: '', newPhone: '', newPhone2: '', newMethod: 'Wave'
+        });
+        this.showToast(created.name + ' added. You can now send to this recipient.');
+      },
+
+      // pay sheet
+      sheetCancel: s.sheet === 'cancel',
+      cancelId: cancelItem ? cancelItem.id : '',
+      cancelBody: cancelItem
+        ? 'You are still within 30 minutes of sending and the money has not been delivered, so you can cancel. ' + cancelItem.amount + ' goes back to ' + cancelItem.payLabel + '. Your bank may take a few business days to show the refund.'
+        : '',
+      confirmCancel: () => {
+        if (!cancelItem) { this.setState({ sheet: '' }); return; }
+        clearTimeout(this._p);
+        this.setState({
+          activity: s.activity.map(function (x) { return x.id === cancelItem.id ? Object.assign({}, x, { status: 'Cancelled', minsLeft: 0 }) : x; }),
+          txn: (s.txn && s.txn.id === cancelItem.id) ? Object.assign({}, s.txn, { cancelled: true }) : s.txn,
+          sheet: '', cancelTarget: ''
+        });
+        this.showToast('Transfer cancelled. Your refund has started.');
+      },
+      sheetPay: s.sheet === 'pay',
+      payRows: [
+        { k: 'To', v: rec.name + ' · ' + rec.method },
+        { k: 'They receive', v: this.fmtXof(xofN) },
+        { k: 'You send', v: this.fmtUsd(usdN) },
+        { k: 'Fee', v: this.fmtUsd(fee) },
+        { k: s.recurring ? 'Charged each transfer' : 'Total', v: this.fmtUsd(total) }
+      ],
+      planText: this.freqText(planAnchor) + ' · ' + this.fmtUsd(usdN),
+      planDatesText: this.genOcc(startDate, s.freq, 3).map((o) => this.fmtDate(o.d)).join(', '),
+      selCardLabel: card.label,
+      selCardSub: card.sub,
+      cardOpen: s.cardOpen,
+      chevStyle: s.cardOpen ? 'transform:rotate(180deg);' : '',
+      toggleCards: () => this.setState({ cardOpen: !this.state.cardOpen, addWarn: false }),
+      cardOpts: cards.map((c) => ({
+        label: c.label, sub: c.sub, pressed: s.card === c.id,
+        style: s.card === c.id ? 'background:#EAF4EF;' : '',
+        pick: () => this.setState({ card: c.id, cardOpen: false, addWarn: false })
+      })),
+      pickAddCard: () => this.setState({ cardOpen: false, addWarn: true }),
+      addWarn: s.addWarn,
+      notAddWarn: !s.addWarn,
+      keepCard: () => this.setState({ addWarn: false }),
+      cancelAndAdd: () => this.setState({
+        sheet: '', cardOpen: false, addWarn: false, screen: 'addCard', cardFrom: 'pay',
+        cardName: '', cardNum: '', cardExp: '', cardCvv: ''
+      }),
+
+      // add card
+      cardName: s.cardName,
+      cardNumDisplay: s.cardNum.replace(/(\d{4})(?=\d)/g, '$1 '),
+      cardExpDisplay: s.cardExp.length > 2 ? s.cardExp.slice(0, 2) + '/' + s.cardExp.slice(2) : s.cardExp,
+      cardCvv: s.cardCvv,
+      onCardName: (e) => this.setState({ cardName: e.target.value }),
+      onCardNum: (e) => this.setState({ cardNum: this.cleanNum(e.target.value, false).slice(0, 16) }),
+      onCardExp: (e) => this.setState({ cardExp: this.cleanNum(e.target.value, false).slice(0, 4) }),
+      onCardCvv: (e) => this.setState({ cardCvv: this.cleanNum(e.target.value, false).slice(0, 4) }),
+      addCardDisabled: addCardDisabled,
+      addCardStyle: addCardDisabled ? dim : '',
+      cardFromPay: s.cardFrom === 'pay',
+      cancelAddCard: () => this.setState({ screen: s.cardFrom === 'methods' ? 'payMethods' : 'home' }),
+      saveCard: () => {
+        if (addCardDisabled) return;
+        const first = s.cardNum.charAt(0);
+        const brand = first === '4' ? 'Visa' : (first === '5' ? 'Mastercard' : (first === '3' ? 'Amex' : 'Card'));
+        const created = { id: 'n' + Date.now(), kind: 'card', enabled: true, label: brand + ' debit ···· ' + s.cardNum.slice(-4), sub: 'Added just now' };
+        if (s.cardFrom === 'methods') {
+          this.setState({
+            cards: this.state.cards.concat([created]), screen: 'payMethods',
+            cardName: '', cardNum: '', cardExp: '', cardCvv: ''
+          });
+          this.showToast(created.label + ' added.');
+        } else {
+          this.setState({
+            cards: this.state.cards.concat([created]), card: created.id, screen: 'home',
+            amountStr: '', startStr: '', recurring: false, mode: 'usd',
+            cardName: '', cardNum: '', cardExp: '', cardCvv: ''
+          });
+          this.showToast(created.label + ' added. Start your transfer again to use it.');
+        }
+      },
+      payText: s.recurring ? 'Authorize and start plan' : (card.kind === 'wallet' ? 'Pay ' + this.fmtUsd(total) + ' with ' + card.label : 'Pay ' + this.fmtUsd(total)),
+      payNote: s.recurring
+        ? 'You are charged on each transfer date, not today. The rate is set when each transfer is sent. Prototype only: rate, fee and cards are sample values.'
+        : 'Prototype only: rate, fee and cards are sample values.',
+      confirmPay: () => {
+        const idRaw = (Math.random().toString(36) + '00000000').slice(2, 10).toUpperCase();
+        const txn = {
+          recurring: s.recurring, id: (s.recurring ? 'PL-' : 'TX-') + idRaw,
+          name: rec.name, initials: rec.initials, method: rec.method,
+          usd: usdN, total: total, xof: xofN, cardLabel: card.label,
+          startLabel: this.fmtDate(startDate), freqText: this.freqText(planAnchor)
+        };
+        const patch = { txn: txn, screen: 'progress', sheet: '', progress: 0 };
+        if (!s.recurring) {
+          patch.activity = [{
+            id: txn.id, name: rec.name, initials: rec.initials, method: rec.method, date: 'Today',
+            amount: this.fmtUsd(total), status: 'In progress', minsLeft: 30, payLabel: card.label
+          }].concat(s.activity);
+        }
+        if (s.recurring) {
+          const id = Math.max.apply(null, this.state.schedules.map(function (x) { return x.id; })) + 1;
+          const created = {
+            id: id, name: rec.name, initials: rec.initials, method: rec.method, phone: rec.phone,
+            usd: usdN, freq: s.freq, anchor: startDate, status: 'active',
+            occ: this.genOcc(startDate, s.freq, 4), past: []
+          };
+          patch.schedules = this.state.schedules.concat([created]);
+          patch.lastNewId = id;
+        }
+        this.setState(patch);
+        this.startProgress();
+      },
+
+      // progress
+      progCancelled: !!t.cancelled,
+      progSteps: !t.cancelled,
+      progComplete: p >= 4 && !t.cancelled,
+      progWorking: p < 4 && !t.cancelled,
+      progTitle: t.cancelled ? 'Transfer cancelled' : (p >= 4 ? (t.recurring ? 'Plan created' : 'Money delivered') : (t.recurring ? 'Setting up your plan' : 'Sending your money')),
+      progBody: t.cancelled
+        ? 'Nothing was sent to ' + (t.name || '') + '.'
+        : (p >= 4
+          ? (t.recurring ? 'Your first transfer to ' + t.name + ' goes out on ' + t.startLabel + '.' : t.name + ' received ' + this.fmtXof(t.xof || 0) + ' on ' + t.method + '.')
+          : 'This takes a few seconds. You can leave this screen and we keep going.'),
+      progRefund: this.fmtUsd(t.total || 0) + ' is going back to ' + (t.cardLabel || 'your payment method') + '. It can take a few business days to show in your account.',
+      showCancelNote: !t.cancelled && !t.recurring,
+      progCancelNote: p < 4 ? 'You can cancel within 30 minutes of sending, until the money is delivered.' : 'This transfer is delivered, so it can no longer be cancelled.',
+      progCanCancel: p < 4 && !t.cancelled && !t.recurring,
+      openCancelProgress: () => this.setState({ sheet: 'cancel', cancelTarget: t.id }),
+      idLabel: t.recurring ? 'Plan ID' : 'Transaction ID',
+      txId: t.id || '',
+      txInitials: t.initials || '',
+      txName: t.name || '',
+      txMethod: t.method || '',
+      txUsd: this.fmtUsd(t.recurring ? (t.total || 0) : (t.total || 0)),
+      txXof: this.fmtXof(t.xof || 0),
+      stepsList: stepsList,
+      progViewSchedule: p >= 4 && !!t.recurring,
+      progDoneText: p >= 4 ? 'Done' : 'Back to home',
+      viewNewSchedule: () => this.setState({ selId: this.state.lastNewId, screen: 'detail' }),
+
+      // reminder
+      remDate: remDate,
+      remUsd: this.fmtUsd(remUsdNum),
+      remName: sch2 ? sch2.name : '',
+      remMethod: sch2 ? sch2.method : '',
+      remXof: this.fmtXof(Math.floor(remUsdNum * rate)),
+      remKeep: () => { this.setState({ reminderDone: true, screen: 'home' }); this.showToast('Got it. The transfer goes out as planned.'); },
+      remSkip: () => { this.skipNext(2); this.setState({ reminderDone: true, screen: 'home' }); },
+      remPause: () => {
+        this.upd(2, function (x) { x.status = 'paused'; return x; });
+        this.setState({ reminderDone: true, screen: 'home' });
+        this.showToast('Plan paused. Resume it any time from Recurring.');
+      },
+      remEdit: () => this.setState({ selId: 2, screen: 'detail', reminderDone: true, editStr: String(sch2.usd), editFreq: sch2.freq, sheet: 'edit' }),
+
+      // schedules list
+      liveList: live.map(row),
+      noLive: live.length === 0,
+      hasEnded: ended.length > 0,
+      endedList: ended.map(row),
+
+      // detail
+      d: d,
+      notStopped: !isStopped,
+      isActive: isActive, isPaused: isPaused, isStopped: isStopped,
+      detailOcc: detailOcc,
+      hasPast: !!(sc.past && sc.past.length),
+      pastList: sc.past || [],
+      skipDisabled: skipDisabled,
+      skipStyle: skipDisabled ? dim : '',
+      doSkip: () => { if (!skipDisabled) this.skipNext(sc.id); },
+      pauseLabel: isPaused ? 'Resume' : 'Pause',
+      doPauseToggle: () => {
+        if (isPaused) {
+          this.upd(sc.id, function (x) { x.status = 'active'; return x; });
+          this.showToast('Plan resumed. Transfers will go out on schedule.');
+        } else {
+          this.setState({ sheet: 'pause' });
+        }
+      },
+      openEdit: () => this.setState({ sheet: 'edit', editStr: String(sc.usd), editFreq: sc.freq }),
+      openStop: () => this.setState({ sheet: 'stop' }),
+
+      // activity
+      activity: actList,
+
+      // sheets
+      hasSheet: s.sheet !== '',
+      sheetStop: s.sheet === 'stop',
+      sheetPause: s.sheet === 'pause',
+      sheetEdit: s.sheet === 'edit',
+      closeSheet: () => this.setState({ sheet: '', cardOpen: false, addWarn: false }),
+      confirmStop: () => {
+        this.upd(sc.id, function (x) {
+          x.status = 'stopped';
+          x.occ = x.occ.map(function (o) { return o.state === 'scheduled' ? { d: o.d, state: 'cancelled' } : o; });
+          return x;
+        });
+        this.setState({ sheet: '' });
+        this.showToast('Plan stopped. Your history is kept.');
+      },
+      confirmPause: () => {
+        this.upd(sc.id, function (x) { x.status = 'paused'; return x; });
+        this.setState({ sheet: '' });
+        this.showToast('Plan paused. Nothing is charged until you resume.');
+      },
+      editStr: s.editStr,
+      onEditAmount: (e) => this.setState({ editStr: this.cleanNum(e.target.value, true) }),
+      editHint: s.editStr !== '' && !editOk ? 'Enter an amount between $10 and $2,500.' : 'Between $10 and $2,500 per transfer.',
+      editHintStyle: s.editStr !== '' && !editOk ? 'color:#B3261E;' : 'color:#55625C;',
+      editDisabled: !editOk,
+      editBtnStyle: editOk ? '' : dim,
+      editFreqOpts: editFreqOpts,
+      editNote: scNext
+        ? 'Changes apply from ' + this.fmtDate(scNext.d) + ' onward. A transfer inside the 3 business day cutoff can no longer be changed.'
+        : 'Changes apply to the next transfer.',
+      saveEdit: () => {
+        const amt = parseFloat(this.state.editStr) || 0;
+        const fq = this.state.editFreq;
+        if (!(amt >= 10 && amt <= 2500)) return;
+        this.upd(sc.id, (x) => {
+          x.usd = amt;
+          if (fq !== x.freq) {
+            const i = this.nextIdx(x);
+            const from = i >= 0 ? x.occ[i].d : x.anchor;
+            x.freq = fq;
+            x.anchor = from;
+            x.occ = this.genOcc(from, fq, 4);
+          }
+          return x;
+        });
+        this.setState({ sheet: '' });
+        this.showToast('Plan updated.');
+      },
+
+      // profile
+      openProfile: () => this.setState({ screen: 'profile' }),
+      backProfile: () => this.setState({ screen: 'profile' }),
+      menuItems: [
+        { label: 'Profile information', sub: 'Name, contact and ID verification', open: () => this.setState({ screen: 'profileInfo' }) },
+        { label: 'Payment methods', sub: 'Debit cards, bank accounts, Apple Pay, Google Pay', open: () => this.setState({ screen: 'payMethods' }) },
+        { label: 'Recipients', sub: s.recipients.length + ' saved', open: () => this.setState({ screen: 'recipientsList' }) },
+        { label: 'Settings', sub: 'Notifications, language and security', open: () => this.setState({ screen: 'settings' }) },
+        { label: 'Help and support', sub: 'WhatsApp, phone and FAQs', open: () => this.setState({ screen: 'help' }) }
+      ],
+      logOut: () => this.showToast('Logged out (prototype only).'),
+      infoRows: [
+        { k: 'Full name', v: 'Sample User' },
+        { k: 'Email', v: 'sample@email.com' },
+        { k: 'Mobile', v: '+1 555 010 0199' },
+        { k: 'Address', v: '123 Example St, Detroit, MI 48201' },
+        { k: 'Date of birth', v: '01 Jan 1990' }
+      ],
+      limitRows: [
+        { k: 'Per transfer', v: '$10 to $2,500' },
+        { k: 'Verification', v: 'ID verified' }
+      ],
+      raiseLimits: () => this.showToast('Higher limits need extra documents (prototype only).'),
+
+      // payment methods page
+      savedMethods: s.cards.filter(function (c) { return c.kind !== 'wallet'; }).map((c) => ({
+        label: c.label, sub: c.sub,
+        remove: () => {
+          const rest = this.state.cards.filter(function (x) { return x.id !== c.id; });
+          const usable = rest.filter(function (x) { return x.kind !== 'wallet' || x.enabled; });
+          if (usable.length === 0) { this.showToast('Keep at least one payment method.'); return; }
+          this.setState({ cards: rest, card: this.state.card === c.id ? usable[0].id : this.state.card });
+          this.showToast(c.label + ' removed.');
+        }
+      })),
+      addDebitFromMethods: () => this.setState({ screen: 'addCard', cardFrom: 'methods', cardName: '', cardNum: '', cardExp: '', cardCvv: '' }),
+      walletRows: s.cards.filter(function (c) { return c.kind === 'wallet'; }).map((w) => ({
+        label: w.label, sub: w.enabled ? 'Connected' : w.sub,
+        btnText: w.enabled ? 'Disconnect' : 'Connect',
+        btnStyle: w.enabled ? 'background:#FFFFFF;color:#14201B;' : 'background:#0B4F3C;color:#FFFFFF;border-color:#0B4F3C;',
+        toggle: () => {
+          const next = this.state.cards.map(function (x) { return x.id === w.id ? Object.assign({}, x, { enabled: !x.enabled }) : x; });
+          const usable = next.filter(function (x) { return x.kind !== 'wallet' || x.enabled; });
+          if (usable.length === 0) { this.showToast('Keep at least one payment method.'); return; }
+          const stillOk = usable.some((x) => x.id === this.state.card);
+          this.setState({ cards: next, card: stillOk ? this.state.card : usable[0].id });
+          this.showToast(w.label + (w.enabled ? ' disconnected.' : ' connected.'));
+        }
+      })),
+
+      // recipients page
+      recList: s.recipients.map((r) => ({ name: r.name, initials: r.initials, method: r.method, phone: r.phone })),
+      addRecipientFromProfile: openAdd('profile'),
+
+      // settings page
+      switchRows: [
+        { key: 'push', label: 'Transfer updates', sub: 'Push notifications when money is sent and delivered' },
+        { key: 'whatsapp', label: 'WhatsApp updates', sub: 'Also send receipts and updates on WhatsApp' },
+        { key: 'bio', label: 'Face ID or fingerprint', sub: 'Use it to open the app and confirm payments' }
+      ].map((r) => ({
+        label: r.label, sub: r.sub, on: s.sw[r.key],
+        trackStyle: s.sw[r.key] ? 'background:#0B4F3C;justify-content:flex-end;' : 'background:#7C8984;justify-content:flex-start;',
+        toggle: () => { const next = Object.assign({}, this.state.sw); next[r.key] = !next[r.key]; this.setState({ sw: next }); }
+      })),
+      langOpts: ['English', 'Français', 'Wolof'].map((l) => ({
+        label: l, style: s.lang === l ? sel : '', pick: () => this.setState({ lang: l })
+      })),
+
+      // help page
+      helpRows: [
+        { label: 'Chat on WhatsApp', sub: 'Answers in English, French or Wolof', open: () => this.showToast('Opens WhatsApp in the real app.') },
+        { label: 'Call support', sub: 'Hours: [YOUR SUPPORT HOURS]', open: () => this.showToast('Starts a phone call in the real app.') },
+        { label: 'Questions and answers', sub: 'Fees, limits, delivery times and cancelling', open: () => this.showToast('Opens the help centre in the real app.') },
+        { label: 'Report a problem', sub: 'Tell us about a transfer that went wrong', open: () => this.showToast('Opens a report form in the real app.') }
+      ],
+
+      // toast
+      hasToast: s.toast !== '',
+      toast: s.toast
+    };
+  }
+}
+
+DCBoot(Component);
+</script>
+</body>
+</html>
